@@ -1437,40 +1437,10 @@ app.get('/api/routes', async (req: Request, res: Response) => {
   res.json(filtered);
 });
 
-// Utility to sync requirements, documents and steps to Supabase child tables if they exist
+// Utility to sync steps to Supabase route_steps child table
 async function syncRouteChildTablesToSupabase(route: AttentionRoute) {
   if (!supabase) return;
   try {
-    if (route.dynamicRequirements && route.dynamicRequirements.length > 0) {
-      try {
-        await supabase.from('route_requirements').delete().eq('route_id', route.id);
-        const reqRows = route.dynamicRequirements.map((req, idx) => ({
-          id: req.id && !req.id.startsWith('req-') ? req.id : `req-${route.id}-${idx + 1}`,
-          route_id: route.id,
-          requirement_text: req.text,
-          is_obligatory: req.isObligatory !== false,
-          observation: req.observation || null,
-          req_order: req.order || idx + 1,
-        }));
-        await supabase.from('route_requirements').insert(reqRows);
-      } catch (e) {}
-    }
-
-    if (route.dynamicDocuments && route.dynamicDocuments.length > 0) {
-      try {
-        await supabase.from('route_documents').delete().eq('route_id', route.id);
-        const docRows = route.dynamicDocuments.map((doc, idx) => ({
-          id: doc.id && !doc.id.startsWith('doc-') ? doc.id : `doc-${route.id}-${idx + 1}`,
-          route_id: route.id,
-          document_name: doc.name,
-          description: doc.description || null,
-          is_obligatory: doc.isObligatory !== false,
-          observation: doc.observation || null,
-        }));
-        await supabase.from('route_documents').insert(docRows);
-      } catch (e) {}
-    }
-
     if (route.dynamicSteps && route.dynamicSteps.length > 0) {
       try {
         await supabase.from('route_steps').delete().eq('route_id', route.id);

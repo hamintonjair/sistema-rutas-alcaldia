@@ -172,7 +172,7 @@ El proyecto está preconfigurado para ser desplegado como un **Web Service de No
 2. Conecta tu repositorio de GitHub.
 3. Configura los parámetros:
    - **Environment:** `Node`
-   - **Build Command:** `npm install && npm run build`
+   - **Build Command:** `npm install --legacy-peer-deps && npm run build`
    - **Start Command:** `npm start`
    - **Plan:** `Free`
 4. En **Environment Variables**, añade:

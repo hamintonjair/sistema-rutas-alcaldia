@@ -120,45 +120,6 @@ CREATE TABLE route_steps (
     step_order INT NOT NULL
 );
 
-CREATE TABLE route_requirements (
-    id VARCHAR(64) PRIMARY KEY,
-    route_id VARCHAR(64) NOT NULL REFERENCES routes(id) ON DELETE CASCADE,
-    requirement_text TEXT NOT NULL,
-    is_obligatory BOOLEAN DEFAULT TRUE,
-    observation TEXT,
-    req_order INT NOT NULL
-);
-
-CREATE TABLE route_documents (
-    id VARCHAR(64) PRIMARY KEY,
-    route_id VARCHAR(64) NOT NULL REFERENCES routes(id) ON DELETE CASCADE,
-    document_name VARCHAR(255) NOT NULL,
-    description TEXT,
-    is_obligatory BOOLEAN DEFAULT TRUE,
-    observation TEXT
-);
-
-CREATE TABLE review_comments (
-    id VARCHAR(64) PRIMARY KEY,
-    route_id VARCHAR(64) NOT NULL REFERENCES routes(id) ON DELETE CASCADE,
-    user_id VARCHAR(64) REFERENCES users(id) ON DELETE SET NULL,
-    user_name VARCHAR(255) NOT NULL,
-    user_role VARCHAR(50) NOT NULL,
-    comment TEXT NOT NULL,
-    comment_type VARCHAR(50) DEFAULT 'general',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE route_versions (
-    id VARCHAR(64) PRIMARY KEY,
-    route_id VARCHAR(64) NOT NULL REFERENCES routes(id) ON DELETE CASCADE,
-    version INT NOT NULL,
-    snapshot JSONB NOT NULL,
-    reason TEXT,
-    updated_by_user_name VARCHAR(255),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
-
 CREATE TABLE observations (
     id VARCHAR(64) PRIMARY KEY,
     route_id VARCHAR(64) REFERENCES routes(id) ON DELETE CASCADE,
@@ -314,3 +275,22 @@ ALTER TABLE feedback_reports ADD COLUMN IF NOT EXISTS responder_name VARCHAR(255
 CREATE INDEX IF NOT EXISTS idx_feedback_reports_route ON feedback_reports(route_id);
 CREATE INDEX IF NOT EXISTS idx_feedback_reports_entity ON feedback_reports(entity_id);
 CREATE INDEX IF NOT EXISTS idx_feedback_reports_status ON feedback_reports(status);
+
+-- =============================================================================
+-- 7. SCRIPT DE LIMPIEZA DE TABLAS OBSOLETAS Y DUPLICADAS
+-- Ejecutar en Supabase SQL Editor para eliminar las tablas que ya no utiliza
+-- el sistema tras la consolidación de vistas del coordinador y nombres en inglés:
+-- =============================================================================
+-- Tablas obsoletas de vistas retiradas del coordinador:
+DROP TABLE IF EXISTS review_comments CASCADE;
+DROP TABLE IF EXISTS route_versions CASCADE;
+DROP TABLE IF EXISTS route_requirements CASCADE;
+DROP TABLE IF EXISTS route_documents CASCADE;
+
+-- Tablas duplicadas creadas con nombres en español (el sistema usa nombres en inglés):
+DROP TABLE IF EXISTS "Compromisos" CASCADE;
+DROP TABLE IF EXISTS "entidades" CASCADE;
+DROP TABLE IF EXISTS "Observaciones" CASCADE;
+DROP TABLE IF EXISTS "Rutas" CASCADE;
+DROP TABLE IF EXISTS "Usuarios" CASCADE;
+
