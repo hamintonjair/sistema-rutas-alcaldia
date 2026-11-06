@@ -112,10 +112,22 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ config }) => {
         <div className="absolute -right-32 -bottom-32 w-96 h-96 rounded-full bg-emerald-600/10 blur-3xl pointer-events-none" />
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-14 sm:py-20 relative z-10 space-y-6">
-          {/* Institutional badge & jurisdiction */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs font-semibold">
-            <Building2 className="w-3.5 h-3.5" />
-            <span>Alcaldía Municipal de Quibdó · Departamento del Chocó</span>
+          {/* Institutional badge with official logo & jurisdiction */}
+          <div className="flex flex-wrap items-center gap-3.5">
+            <img
+              src="/quibdo_alcaldia_logo.png"
+              alt="Logo Oficial Alcaldía de Quibdó"
+              className="w-14 h-14 object-contain p-1 bg-white rounded-2xl border-2 border-emerald-500 shadow-md shrink-0"
+            />
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/90 border border-slate-700 text-emerald-400 text-xs font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                <span>Alcaldía Municipal de Quibdó · Departamento del Chocó</span>
+              </div>
+              <div className="text-[11px] text-slate-400 font-medium block">
+                Plataforma Oficial de la Ruta Estratégica Migrante
+              </div>
+            </div>
           </div>
 
           {/* 2. Official Platform Title */}

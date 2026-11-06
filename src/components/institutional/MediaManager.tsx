@@ -954,15 +954,6 @@ export const MediaManager: React.FC<MediaManagerProps> = ({
 
                 {/* Media Container with Previous/Next Arrows */}
                 <div className="relative flex-1 bg-slate-950 flex items-center justify-center min-h-[350px] max-h-[520px] overflow-hidden">
-                  {/* Floating Close Button for Mobile Accessibility */}
-                  <button
-                    type="button"
-                    onClick={() => setLightboxIndex(null)}
-                    className="absolute right-3 top-3 p-2 bg-slate-900/80 hover:bg-slate-800 text-white border border-slate-700 rounded-full transition-colors z-20 shadow-md sm:hidden"
-                    title="Cerrar modal"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
                   {/* Prev Button */}
                   <button
                     onClick={() =>

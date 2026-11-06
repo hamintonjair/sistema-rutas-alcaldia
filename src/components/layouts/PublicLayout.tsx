@@ -16,13 +16,16 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
+      {/* Municipal Green & Red Brand Ribbon */}
+      <div className="h-1 bg-gradient-to-r from-emerald-600 via-emerald-500 to-red-600 w-full" />
+
       {/* Municipal Banner */}
       <div className="bg-slate-950 text-slate-300 text-xs py-1.5 px-4 border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="font-semibold text-emerald-400">República de Colombia</span>
             <span className="text-slate-500">•</span>
-            <span>Alcaldía Municipal de Quibdó - Chocó</span>
+            <span className="font-medium text-slate-200">Alcaldía Municipal de Quibdó - Chocó</span>
             <span className="hidden sm:inline text-slate-500">•</span>
             <span className="hidden sm:inline text-slate-400">Atención Integral a Población Migrante</span>
           </div>
@@ -32,16 +35,20 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
       {/* Public Top Bar Header */}
       <header className="sticky top-0 z-40 bg-slate-900 text-white border-b border-slate-800 shadow-md">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2 sm:gap-4">
-          {/* Wordmark */}
+          {/* Wordmark with Official Logo */}
           <Link to="/" className="flex items-center gap-2.5 min-w-0 shrink flex-1 xs:flex-initial">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-lg text-white shadow-inner shrink-0">
-              <Building2 className="w-5 h-5" />
-            </div>
+            <img
+              src="/quibdo_alcaldia_logo.png"
+              alt="Alcaldía de Quibdó"
+              className="w-10 h-10 object-contain p-0.5 bg-white rounded-xl border border-emerald-500/40 shrink-0 shadow-xs"
+            />
             <div className="min-w-0 truncate">
               <span className="text-xs sm:text-base font-bold tracking-tight text-white block truncate">
                 Ruta Estratégica Migrante
               </span>
-              <span className="text-[10px] sm:text-xs text-slate-400 block -mt-1 truncate">Municipio de Quibdó</span>
+              <span className="text-[10px] sm:text-xs text-emerald-400 font-semibold block -mt-1 truncate">
+                Alcaldía de Quibdó
+              </span>
             </div>
           </Link>
 
