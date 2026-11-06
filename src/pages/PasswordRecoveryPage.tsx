@@ -105,24 +105,24 @@ export const PasswordRecoveryPage: React.FC = () => {
           )}
 
           <div>
-            <label className="block font-semibold mb-1">Token de Verificación:</label>
+            <label className="block font-semibold mb-1 text-slate-700 dark:text-slate-300">Token de Verificación:</label>
             <input
               type="text"
               value={token}
               onChange={(e) => setToken(e.target.value)}
-              className="w-full p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 font-mono text-xs"
+              className="w-full p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"
               required
             />
           </div>
 
           <div>
-            <label className="block font-semibold mb-1">Nueva Contraseña:</label>
+            <label className="block font-semibold mb-1 text-slate-700 dark:text-slate-300">Nueva Contraseña:</label>
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Ingrese su nueva contraseña"
-              className="w-full p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
+              className="w-full p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none"
               required
             />
           </div>

@@ -558,28 +558,93 @@ app.post('/api/auth/logout', authMiddleware, (req: AuthenticatedRequest, res: Re
   res.json({ success: true });
 });
 
-app.post('/api/auth/recover-password', (req: Request, res: Response) => {
+app.post('/api/auth/recover-password', async (req: Request, res: Response) => {
   const { email } = req.body;
-  const user = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim());
+  if (!email) return res.status(400).json({ error: 'Debe proporcionar un correo electrónico.' });
+  const cleanEmail = email.toLowerCase().trim();
+
+  let user: any = null;
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .ilike('email', cleanEmail)
+        .maybeSingle();
+      if (!error && data) {
+        user = data;
+      }
+    } catch (err) {}
+  }
+
+  if (!user) {
+    const localUser = db.users.find((u) => u.email.toLowerCase() === cleanEmail);
+    if (localUser) {
+      user = localUser;
+    }
+  }
+
   if (!user) return res.status(404).json({ error: 'Correo no registrado.' });
 
   const token = `rec_${Date.now()}`;
   db.recoveryTokens[token] = { email: user.email, expires: Date.now() + 3600000 };
   saveDatabase();
 
-  logAudit(user.id, user.name, user.role, user.entityName || 'General', 'RECUPERACION_PASSWORD_SOLICITADA', `Solicitud para ${user.email}`);
+  logAudit(user.id, user.name, user.role, user.entity_name || user.entityName || 'General', 'RECUPERACION_PASSWORD_SOLICITADA', `Solicitud para ${user.email}`);
   res.json({ success: true, message: `Token de recuperación generado: ${token}`, token });
 });
 
-app.post('/api/auth/reset-password', (req: Request, res: Response) => {
+app.post('/api/auth/reset-password', async (req: Request, res: Response) => {
   const { email, token, newPassword } = req.body;
-  const user = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase().trim());
+  if (!email || !newPassword) return res.status(400).json({ error: 'Faltan datos requeridos.' });
+  const cleanEmail = email.toLowerCase().trim();
+
+  let user: any = null;
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .ilike('email', cleanEmail)
+        .maybeSingle();
+      if (!error && data) {
+        user = data;
+      }
+    } catch (err) {}
+  }
+
+  if (!user) {
+    const localUser = db.users.find((u) => u.email.toLowerCase() === cleanEmail);
+    if (localUser) {
+      user = localUser;
+    }
+  }
+
   if (!user) return res.status(404).json({ error: 'Usuario no encontrado.' });
 
-  user.password_hash = newPassword;
+  // Update password in Supabase
+  if (supabase) {
+    try {
+      await supabase
+        .from('users')
+        .update({ password_hash: newPassword })
+        .eq('id', user.id);
+    } catch (err) {
+      console.warn('Could not update password in Supabase:', err);
+    }
+  }
+
+  // Update in local db
+  const idx = db.users.findIndex((u) => u.id === user.id || u.email.toLowerCase() === cleanEmail);
+  if (idx !== -1) {
+    db.users[idx].password_hash = newPassword;
+  } else {
+    user.password_hash = newPassword;
+    db.users.push(user);
+  }
   saveDatabase();
 
-  logAudit(user.id, user.name, user.role, user.entityName || 'General', 'PASSWORD_RESTABLECIDO', `Contraseña restablecida para ${user.email}`);
+  logAudit(user.id, user.name, user.role, user.entity_name || user.entityName || 'General', 'PASSWORD_RESTABLECIDO', `Contraseña restablecida para ${user.email}`);
   res.json({ success: true });
 });
 
