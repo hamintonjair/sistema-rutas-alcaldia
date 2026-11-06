@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Plus, Shield, CheckCircle, XCircle, Search, Eye, EyeOff, Key, Sparkles, AlertCircle } from 'lucide-react';
+import { Users, Plus, Shield, CheckCircle, XCircle, Search, Eye, EyeOff, Key, Sparkles, AlertCircle, Trash2, AlertTriangle } from 'lucide-react';
 import { User, Entity, Role } from '../../types';
 import { api, UserContext } from '../../services/api';
 
@@ -20,6 +20,9 @@ export const UsersManager: React.FC<UsersManagerProps> = ({ users, entities, use
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const [localEntities, setLocalEntities] = useState<Entity[]>(entities || []);
 
@@ -161,6 +164,33 @@ export const UsersManager: React.FC<UsersManagerProps> = ({ users, entities, use
     }
   };
 
+  const handleDeleteClick = (u: User) => {
+    if (u.id === '00000000-0000-0000-0000-000000000000' || u.email === 'admin@sistema.com') {
+      setActionSuccess('No se puede eliminar al Administrador General del sistema.');
+      setTimeout(() => setActionSuccess(null), 4000);
+      return;
+    }
+    setDeleteError(null);
+    setUserToDelete(u);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!userToDelete) return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await api.deleteUser(userToDelete.id, userContext);
+      setActionSuccess(`Usuario "${userToDelete.name}" eliminado correctamente.`);
+      setUserToDelete(null);
+      onRefresh();
+      setTimeout(() => setActionSuccess(null), 5000);
+    } catch (err: any) {
+      setDeleteError(err.message || 'Error al eliminar el usuario.');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const filtered = users.filter(
     (u) =>
       u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -230,13 +260,21 @@ export const UsersManager: React.FC<UsersManagerProps> = ({ users, entities, use
                     </span>
                   </td>
                   {userContext.role === 'admin' && (
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right space-x-1">
                       <button
                         onClick={() => openEditModal(u)}
                         className="px-2.5 py-1 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md transition-colors"
                       >
                         Editar
                       </button>
+                      {u.id !== '00000000-0000-0000-0000-000000000000' && u.email !== 'admin@sistema.com' && (
+                        <button
+                          onClick={() => handleDeleteClick(u)}
+                          className="px-2.5 py-1 text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-md transition-colors"
+                        >
+                          Eliminar
+                        </button>
+                      )}
                     </td>
                   )}
                 </tr>
@@ -401,6 +439,72 @@ export const UsersManager: React.FC<UsersManagerProps> = ({ users, entities, use
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {userToDelete && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl border border-rose-200 dark:border-rose-900/50 w-full max-w-md p-6 space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-sm text-slate-900 dark:text-white">
+                  Confirmar Eliminación de Usuario
+                </h3>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Esta acción revocará de inmediato los accesos del usuario al sistema.
+                </p>
+              </div>
+            </div>
+
+            {deleteError && (
+              <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg text-xs flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                <span>{deleteError}</span>
+              </div>
+            )}
+
+            <div className="p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-lg border border-slate-200 dark:border-slate-700 text-xs space-y-1.5">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500 dark:text-slate-400">Servidor Público:</span>
+                <span className="font-semibold text-slate-900 dark:text-white">{userToDelete.name}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500 dark:text-slate-400">Correo Institucional:</span>
+                <span className="text-slate-700 dark:text-slate-300 font-mono text-[11px]">{userToDelete.email}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-500 dark:text-slate-400">Entidad:</span>
+                <span className="text-slate-700 dark:text-slate-300 font-medium">{userToDelete.entityName || 'Administración'}</span>
+              </div>
+            </div>
+
+            <p className="text-xs text-rose-600 dark:text-rose-400 font-medium">
+              ¿Está seguro de eliminar definitivamente a este usuario del sistema? Esta acción no se puede deshacer.
+            </p>
+
+            <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={() => setUserToDelete(null)}
+                className="px-3.5 py-2 text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 disabled:opacity-50 rounded-lg transition-colors flex items-center gap-1.5"
+              >
+                {deleting ? 'Eliminando...' : 'Sí, Eliminar Usuario'}
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -402,13 +402,23 @@ async function authMiddleware(req: AuthenticatedRequest, res: Response, next: Ne
     // Map database fields to application fields
     const roleCode = toRoleCode(foundUser.role);
     const roleSpanish = toSpanishRole(foundUser.role);
+    const entityId = foundUser.entityId || foundUser.entity_id;
+    let logoUrl = foundUser.logoUrl || foundUser.logo_url;
+    if (entityId) {
+      const ent = db.entities.find((e) => e.id === entityId);
+      if (ent) {
+        logoUrl = ent.logoUrl || ent.logo_url || logoUrl;
+      }
+    }
 
     req.user = {
       ...foundUser,
       role: roleCode,
       role_code: roleCode,
-      entityId: foundUser.entityId || foundUser.entity_id,
+      entityId: entityId,
       entityName: foundUser.entityName || foundUser.entity_name,
+      logoUrl: logoUrl,
+      logo_url: logoUrl,
       positionTitle: foundUser.positionTitle || foundUser.position_title,
     } as SeedUser;
     
@@ -1285,6 +1295,38 @@ app.post('/api/users/:id/reset-password', authMiddleware, requireRole(['admin'])
 
   logAudit(req.user!.id, req.user!.name, req.user!.role, 'Administración', 'RESTABLECER_CLAVE_USUARIO', `Clave restablecida para ${user?.email || id}`, id);
   res.json({ success: true, message: `Clave restablecida exitosamente para ${user ? user.name : id}. Nueva clave temporal: ${tempPass}`, tempPassword: tempPass });
+});
+
+// DELETE /api/users/:id (Delete user - Admin only, cannot delete admin)
+app.delete('/api/users/:id', authMiddleware, requireRole(['admin']), async (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+
+  if (id === '00000000-0000-0000-0000-000000000000') {
+    return res.status(403).json({ error: 'No se puede eliminar al Administrador General del sistema.' });
+  }
+
+  const userIndex = db.users.findIndex((u) => u.id === id);
+  const targetUser = userIndex !== -1 ? db.users[userIndex] : null;
+
+  if (targetUser && (targetUser.email === 'admin@sistema.com' || targetUser.role === 'admin' || (targetUser.role as string) === 'Administrador')) {
+    return res.status(403).json({ error: 'No se puede eliminar la cuenta de administrador.' });
+  }
+
+  if (userIndex !== -1) {
+    db.users.splice(userIndex, 1);
+    saveDatabase();
+  }
+
+  if (supabase) {
+    try {
+      await supabase.from('users').delete().eq('id', id);
+    } catch (sbErr) {
+      console.warn('Could not delete user from Supabase:', sbErr);
+    }
+  }
+
+  logAudit(req.user!.id, req.user!.name, req.user!.role, 'Administración', 'ELIMINAR_USUARIO', `Usuario eliminado ID: ${id}`, id);
+  res.json({ success: true, message: 'Usuario eliminado correctamente.' });
 });
 
 // --- ROUTES ENDPOINTS (GET, POST, PUT, STATUS) ---

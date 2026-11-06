@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Building2, Calendar, LogIn, ShieldAlert } from 'lucide-react';
+import { Building2, Calendar, LogIn, ShieldAlert, Menu, X } from 'lucide-react';
 import { SystemConfig } from '../../types';
 import { Breadcrumbs } from '../common/Breadcrumbs';
 
@@ -9,6 +9,7 @@ interface PublicLayoutProps {
 }
 
 export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const meetingDateObj = new Date(config.initialMeetingDate);
   const formattedMeeting = `${meetingDateObj.getDate()} de Noviembre de ${meetingDateObj.getFullYear()}, 9:00 a.m.`;
@@ -28,7 +29,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
         </div>
       </div>
 
-      {/* Public Top Bar Header (NO ROLE SELECTOR DROPDOWN ON PUBLIC INTERFACE) */}
+      {/* Public Top Bar Header */}
       <header className="sticky top-0 z-40 bg-slate-900 text-white border-b border-slate-800 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           {/* Wordmark */}
@@ -100,8 +101,67 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
               <span className="hidden sm:inline">Acceso Institucional</span>
               <span className="sm:hidden">Ingresar</span>
             </Link>
+
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+              title="Abrir menú"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden bg-slate-900 border-t border-slate-800 px-4 py-4 space-y-2 text-xs font-semibold shadow-xl">
+            <NavLink
+              to="/"
+              end
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2.5 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Inicio
+            </NavLink>
+            <NavLink
+              to="/rutas"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2.5 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Catálogo de Rutas
+            </NavLink>
+            <NavLink
+              to="/entidades"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2.5 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Entidades
+            </NavLink>
+            <NavLink
+              to="/reportar-informacion"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2.5 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-amber-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Reportar Novedad
+            </NavLink>
+          </div>
+        )}
       </header>
 
       {/* Breadcrumbs (for top-level pages only, detail pages render rich contextual breadcrumbs) */}

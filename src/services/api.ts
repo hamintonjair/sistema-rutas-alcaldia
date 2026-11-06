@@ -218,6 +218,14 @@ export const api = {
     return parseJsonResponse(res);
   },
 
+  async deleteUser(id: string, userContext: UserContext): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`/api/users/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(userContext),
+    });
+    return parseJsonResponse(res);
+  },
+
   async resetUserPassword(userId: string, userContext: UserContext): Promise<{ success: boolean; message: string; tempPassword?: string }> {
     const res = await fetch(`/api/users/${userId}/reset-password`, {
       method: 'POST',
