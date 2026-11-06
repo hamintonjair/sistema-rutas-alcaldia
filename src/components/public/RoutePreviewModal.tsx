@@ -45,11 +45,14 @@ export const RoutePreviewModal: React.FC<RoutePreviewModalProps> = ({ route, onC
           {/* Main Hero Card Banner */}
           <div className="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-900 text-white shadow-md">
             <img
-              src={route.mainImageUrl || '/src/assets/images/quibdo_alcaldia_logo_1793464458662.jpg'}
+              src={route.mainImageUrl || '/quibdo_alcaldia_logo.png'}
               alt={route.mainImageAlt || route.name || 'Vista de la ruta'}
               onError={(e) => {
+                e.currentTarget.onerror = null;
                 if (route.mainImageUrl && !e.currentTarget.src.includes('/api/storage/proxy')) {
                   e.currentTarget.src = `/api/storage/proxy?url=${encodeURIComponent(route.mainImageUrl)}`;
+                } else {
+                  e.currentTarget.src = '/quibdo_alcaldia_logo.png';
                 }
               }}
               className="w-full h-48 object-cover opacity-60"
@@ -157,8 +160,11 @@ export const RoutePreviewModal: React.FC<RoutePreviewModalProps> = ({ route, onC
                       src={img.url}
                       alt={img.altText}
                       onError={(e) => {
+                        e.currentTarget.onerror = null;
                         if (img.url && !e.currentTarget.src.includes('/api/storage/proxy')) {
                           e.currentTarget.src = `/api/storage/proxy?url=${encodeURIComponent(img.url)}`;
+                        } else {
+                          e.currentTarget.src = '/quibdo_alcaldia_logo.png';
                         }
                       }}
                       className="w-full h-28 object-cover"

@@ -311,12 +311,15 @@ export const InstitutionalRoutesPage: React.FC<InstitutionalRoutesPageProps> = (
                   {/* Card Image Header */}
                   <div className="relative h-40 bg-slate-900 overflow-hidden">
                     <img
-                      src={r.mainImageUrl || '/src/assets/images/quibdo_alcaldia_logo_1793464458662.jpg'}
+                      src={r.mainImageUrl || '/quibdo_alcaldia_logo.png'}
                       alt={r.mainImageAlt || r.name}
                       className="w-full h-full object-cover opacity-70"
                       onError={(e) => {
                         if (r.mainImageUrl && !e.currentTarget.src.includes('/api/storage/proxy')) {
                           e.currentTarget.src = `/api/storage/proxy?url=${encodeURIComponent(r.mainImageUrl)}`;
+                        } else {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = '/quibdo_alcaldia_logo.png';
                         }
                       }}
                     />

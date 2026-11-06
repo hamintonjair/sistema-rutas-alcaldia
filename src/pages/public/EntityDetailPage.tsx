@@ -241,9 +241,13 @@ export const EntityDetailPage: React.FC = () => {
                         <img
                           src={
                             route.mainImageUrl ||
-                            '/src/assets/images/quibdo_alcaldia_logo_1793464458662.jpg'
+                            '/quibdo_alcaldia_logo.png'
                           }
                           alt={route.mainImageAlt || route.name}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = '/quibdo_alcaldia_logo.png';
+                          }}
                           className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-300"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />

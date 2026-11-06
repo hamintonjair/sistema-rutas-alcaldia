@@ -132,8 +132,12 @@ export const AdminEntityDetailPage: React.FC<AdminEntityDetailPageProps> = ({ us
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex items-start gap-4">
               <img
-                src={entity.logoUrl || entity.logo_url || '/src/assets/images/quibdo_alcaldia_logo_1793464458662.jpg'}
+                src={entity.logoUrl || entity.logo_url || '/quibdo_alcaldia_logo.png'}
                 alt={entity.name}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/quibdo_alcaldia_logo.png';
+                }}
                 className="w-16 h-16 rounded-xl bg-white p-1 object-contain border border-slate-700 shrink-0"
               />
               <div>

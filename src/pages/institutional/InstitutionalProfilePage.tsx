@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Building2,
   Save,
@@ -19,6 +20,7 @@ import {
   Image as ImageIcon,
   Check,
   RefreshCw,
+  HelpCircle,
 } from 'lucide-react';
 import { api, UserContext } from '../../services/api';
 import { Entity } from '../../types';
@@ -253,25 +255,35 @@ export const InstitutionalProfilePage: React.FC<InstitutionalProfilePageProps> =
             </p>
           </div>
 
-          {/* Privileged Entity Selector */}
-          {isPrivileged && entities.length > 0 && (
-            <div className="bg-slate-800/90 p-3 rounded-xl border border-slate-700 space-y-1">
-              <label className="block text-[11px] font-semibold text-slate-300">
-                Seleccionar Entidad para Administrar:
-              </label>
-              <select
-                value={selectedEntityId}
-                onChange={(e) => handleEntityChange(e.target.value)}
-                className="w-full text-xs bg-slate-900 text-white rounded-lg p-2 border border-slate-700 focus:ring-2 focus:ring-emerald-500"
-              >
-                {entities.map((ent) => (
-                  <option key={ent.id} value={ent.id}>
-                    {ent.name} ({ent.sigla || ent.code})
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              to="/mi-entidad/ayuda"
+              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 font-semibold text-xs transition-colors flex items-center gap-1.5 border border-slate-700 shadow-xs"
+            >
+              <HelpCircle className="w-4 h-4" />
+              <span>Centro de Ayuda</span>
+            </Link>
+
+            {/* Privileged Entity Selector */}
+            {isPrivileged && entities.length > 0 && (
+              <div className="bg-slate-800/90 p-3 rounded-xl border border-slate-700 space-y-1">
+                <label className="block text-[11px] font-semibold text-slate-300">
+                  Seleccionar Entidad para Administrar:
+                </label>
+                <select
+                  value={selectedEntityId}
+                  onChange={(e) => handleEntityChange(e.target.value)}
+                  className="w-full text-xs bg-slate-900 text-white rounded-lg p-2 border border-slate-700 focus:ring-2 focus:ring-emerald-500"
+                >
+                  {entities.map((ent) => (
+                    <option key={ent.id} value={ent.id}>
+                      {ent.name} ({ent.sigla || ent.code})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -547,9 +559,13 @@ export const InstitutionalProfilePage: React.FC<InstitutionalProfilePageProps> =
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-700/50 p-1.5 flex items-center justify-center border border-slate-200 dark:border-slate-600 shrink-0">
                     <img
-                      src={logoPreview || '/src/assets/images/quibdo_alcaldia_logo_1793464458662.jpg'}
+                      src={logoPreview || '/quibdo_alcaldia_logo.png'}
                       alt={name}
                       className="w-full h-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/quibdo_alcaldia_logo.png';
+                      }}
                     />
                   </div>
                   <div className="min-w-0">
@@ -576,6 +592,25 @@ export const InstitutionalProfilePage: React.FC<InstitutionalProfilePageProps> =
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Guía Técnica y Centro de Ayuda Callout */}
+        <div className="bg-emerald-950 text-white p-5 rounded-2xl border border-emerald-800 shadow-md flex flex-wrap items-center justify-between gap-4">
+          <div className="space-y-1 max-w-2xl">
+            <h4 className="font-serif font-bold text-sm text-emerald-200 flex items-center gap-2">
+              <HelpCircle className="w-4 h-4 text-emerald-400" />
+              ¿Tiene dudas sobre los requisitos o la protección de datos?
+            </h4>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Consulte la Guía Metodológica y el Manual del Enlace Institucional para conocer los lineamientos oficiales de estructuración de rutas, carga segura de logos y cumplimiento de la normativa PII.
+            </p>
+          </div>
+          <Link
+            to="/mi-entidad/ayuda"
+            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs flex items-center gap-1.5 shadow-sm transition-colors shrink-0"
+          >
+            <span>Ver Centro de Ayuda Completo</span>
+          </Link>
         </div>
 
         {/* Action Bar */}

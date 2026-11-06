@@ -31,9 +31,13 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ route, onClose }
           <img
             src={
               route.mainImageUrl ||
-              '/src/assets/images/quibdo_alcaldia_logo_1793464458662.jpg'
+              '/quibdo_alcaldia_logo.png'
             }
             alt={route.mainImageAlt || route.name}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = '/quibdo_alcaldia_logo.png';
+            }}
             className="w-full h-full object-cover opacity-85"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />

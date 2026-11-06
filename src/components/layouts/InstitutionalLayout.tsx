@@ -67,6 +67,12 @@ export const InstitutionalLayout: React.FC<InstitutionalLayoutProps> = ({
       icon: MessageSquare,
       end: false,
     },
+    {
+      to: '/mi-entidad/ayuda',
+      label: 'Ayuda',
+      icon: HelpCircle,
+      end: false,
+    },
   ];
 
   return (
@@ -145,11 +151,12 @@ export const InstitutionalLayout: React.FC<InstitutionalLayoutProps> = ({
                   src={
                     (userContext as any).logoUrl ||
                     (userContext as any).logo_url ||
-                    '/src/assets/images/quibdo_alcaldia_logo_1793464458662.jpg'
+                    '/quibdo_alcaldia_logo.png'
                   }
                   alt="Logo"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/src/assets/images/quibdo_alcaldia_logo_1793464458662.jpg';
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/quibdo_alcaldia_logo.png';
                   }}
                   className="w-10 h-10 rounded-lg bg-white p-0.5 object-contain border border-slate-200 dark:border-slate-700 shrink-0"
                 />

@@ -203,7 +203,7 @@ export const RouteFormModal: React.FC<RouteFormModalProps> = ({
 
   // Images & Media
   const [mainImageUrl, setMainImageUrl] = useState(
-    route?.mainImageUrl || '/src/assets/images/quibdo_alcaldia_logo_1793464458662.jpg'
+    route?.mainImageUrl || '/quibdo_alcaldia_logo.png'
   );
   const [mainImageAlt, setMainImageAlt] = useState(
     route?.mainImageAlt || 'Atención Institucional de la Alcaldía de Quibdó'
@@ -1160,8 +1160,11 @@ export const RouteFormModal: React.FC<RouteFormModalProps> = ({
                       src={mainImageUrl}
                       alt={mainImageAlt}
                       onError={(e) => {
+                        e.currentTarget.onerror = null;
                         if (!e.currentTarget.src.includes('/api/storage/proxy')) {
                           e.currentTarget.src = `/api/storage/proxy?url=${encodeURIComponent(mainImageUrl)}`;
+                        } else {
+                          e.currentTarget.src = '/quibdo_alcaldia_logo.png';
                         }
                       }}
                       className="w-full h-32 object-cover"
@@ -1223,8 +1226,11 @@ export const RouteFormModal: React.FC<RouteFormModalProps> = ({
                           onClick={() => setSelectedEnlargedImage(img.url)}
                           title="Clic para ampliar fotografía"
                           onError={(e) => {
+                            e.currentTarget.onerror = null;
                             if (!e.currentTarget.src.includes('/api/storage/proxy')) {
                               e.currentTarget.src = `/api/storage/proxy?url=${encodeURIComponent(img.url)}`;
+                            } else {
+                              e.currentTarget.src = '/quibdo_alcaldia_logo.png';
                             }
                           }}
                           className="w-full h-20 object-cover cursor-pointer hover:opacity-90 transition-opacity"
@@ -1397,8 +1403,11 @@ export const RouteFormModal: React.FC<RouteFormModalProps> = ({
               alt="Fotografía institucional ampliada"
               className="max-h-[80vh] w-auto max-w-full object-contain mx-auto rounded-lg"
               onError={(e) => {
+                e.currentTarget.onerror = null;
                 if (!e.currentTarget.src.includes('/api/storage/proxy')) {
                   e.currentTarget.src = `/api/storage/proxy?url=${encodeURIComponent(selectedEnlargedImage)}`;
+                } else {
+                  e.currentTarget.src = '/quibdo_alcaldia_logo.png';
                 }
               }}
             />

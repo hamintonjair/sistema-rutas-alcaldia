@@ -301,8 +301,12 @@ export const EntitiesManager: React.FC<EntitiesManagerProps> = ({ entities, user
                   <td className="p-3.5">
                     <div className="flex items-center gap-3">
                       <img
-                        src={ent.logoUrl || ent.logo_url || '/src/assets/images/quibdo_alcaldia_logo_1793464458662.jpg'}
+                        src={ent.logoUrl || ent.logo_url || '/quibdo_alcaldia_logo.png'}
                         alt={ent.name}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = '/quibdo_alcaldia_logo.png';
+                        }}
                         className="w-10 h-10 rounded-lg bg-white p-0.5 object-contain border border-slate-200 dark:border-slate-700 shrink-0"
                       />
                       <div>

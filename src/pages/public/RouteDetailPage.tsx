@@ -226,12 +226,15 @@ export const RouteDetailPage: React.FC<RouteDetailPageProps> = ({ config }) => {
             <img
               src={
                 route.mainImageUrl ||
-                '/src/assets/images/quibdo_alcaldia_logo_1793464458662.jpg'
+                '/quibdo_alcaldia_logo.png'
               }
               alt={route.mainImageAlt || route.name}
               onError={(e) => {
                 if (route.mainImageUrl && !e.currentTarget.src.includes('/api/storage/proxy')) {
                   e.currentTarget.src = `/api/storage/proxy?url=${encodeURIComponent(route.mainImageUrl)}`;
+                } else {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/quibdo_alcaldia_logo.png';
                 }
               }}
               className="w-full h-full object-cover opacity-85"
@@ -623,6 +626,9 @@ export const RouteDetailPage: React.FC<RouteDetailPageProps> = ({ config }) => {
                     onError={(e) => {
                       if (img.url && !e.currentTarget.src.includes('/api/storage/proxy')) {
                         e.currentTarget.src = `/api/storage/proxy?url=${encodeURIComponent(img.url)}`;
+                      } else {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/quibdo_alcaldia_logo.png';
                       }
                     }}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
