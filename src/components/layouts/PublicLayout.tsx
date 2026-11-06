@@ -31,17 +31,17 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
 
       {/* Public Top Bar Header */}
       <header className="sticky top-0 z-40 bg-slate-900 text-white border-b border-slate-800 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2 sm:gap-4">
           {/* Wordmark */}
-          <Link to="/" className="flex items-center gap-3 whitespace-nowrap shrink-0">
-            <div className="w-10 h-10 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-lg text-white shadow-inner">
+          <Link to="/" className="flex items-center gap-2.5 min-w-0 shrink flex-1 xs:flex-initial">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-lg text-white shadow-inner shrink-0">
               <Building2 className="w-5 h-5" />
             </div>
-            <div>
-              <span className="text-base font-bold tracking-tight text-white block">
+            <div className="min-w-0 truncate">
+              <span className="text-xs sm:text-base font-bold tracking-tight text-white block truncate">
                 Ruta Estratégica Migrante
               </span>
-              <span className="text-xs text-slate-400 block -mt-1">Municipio de Quibdó</span>
+              <span className="text-[10px] sm:text-xs text-slate-400 block -mt-1 truncate">Municipio de Quibdó</span>
             </div>
           </Link>
 
@@ -92,10 +92,10 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
           </nav>
 
           {/* Right: Institutional Login & Mobile Toggle */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <Link
               to="/login"
-              className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-sm"
+              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-sm shrink-0"
             >
               <LogIn className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Acceso Institucional</span>
@@ -104,10 +104,10 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
-              title="Abrir menú"
+              className="lg:hidden p-2 text-emerald-400 bg-slate-800/90 border border-slate-700 hover:bg-slate-700 hover:text-white rounded-lg transition-colors shrink-0 flex items-center justify-center shadow-xs"
+              title="Abrir menú de navegación"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>

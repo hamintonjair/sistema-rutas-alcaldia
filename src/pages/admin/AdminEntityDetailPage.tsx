@@ -79,14 +79,16 @@ export const AdminEntityDetailPage: React.FC<AdminEntityDetailPageProps> = ({ us
 
   const { entity, users, routes, indicators } = data;
 
+  const [actionBanner, setActionBanner] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
   const handleResetPassword = async (usr: User) => {
-    if (confirm(`¿Desea restablecer las credenciales del usuario ${usr.name}?`)) {
-      try {
-        const res = await api.resetUserPassword(usr.id, userContext);
-        alert(res.message);
-      } catch (err: any) {
-        alert(err.message || 'Error al restablecer contraseña.');
-      }
+    try {
+      const res = await api.resetUserPassword(usr.id, userContext);
+      setActionBanner({ type: 'success', message: res.message });
+      setTimeout(() => setActionBanner(null), 6000);
+    } catch (err: any) {
+      setActionBanner({ type: 'error', message: err.message || 'Error al restablecer contraseña.' });
+      setTimeout(() => setActionBanner(null), 6000);
     }
   };
 
@@ -106,6 +108,23 @@ export const AdminEntityDetailPage: React.FC<AdminEntityDetailPageProps> = ({ us
           ID Entidad: <strong className="font-mono text-slate-800 dark:text-slate-200">{entity.id}</strong>
         </span>
       </div>
+
+      {actionBanner && (
+        <div
+          className={`p-3.5 rounded-xl border text-xs flex items-center gap-2 ${
+            actionBanner.type === 'success'
+              ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200'
+              : 'bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-200'
+          }`}
+        >
+          {actionBanner.type === 'success' ? (
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          ) : (
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+          )}
+          <span>{actionBanner.message}</span>
+        </div>
+      )}
 
       {/* Entity Profile Header Card */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-2xs">

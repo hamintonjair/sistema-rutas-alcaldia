@@ -67,7 +67,9 @@ export const MediaManager: React.FC<MediaManagerProps> = ({
   // Modals
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [editingFile, setEditingFile] = useState<MediaFileModel | null>(null);
+  const [editingError, setEditingError] = useState<string | null>(null);
   const [deletingFile, setDeletingFile] = useState<MediaFileModel | null>(null);
+  const [deletingError, setDeletingError] = useState<string | null>(null);
   const [deleteReason, setDeleteReason] = useState('');
 
   // Accessible Lightbox / Viewer
@@ -292,15 +294,16 @@ export const MediaManager: React.FC<MediaManagerProps> = ({
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingFile) return;
+    setEditingError(null);
 
     try {
       const isImg = editingFile.mimeType.startsWith('image/');
       if (isImg && (!editingFile.altText || editingFile.altText.trim().length < 5)) {
-        alert('El texto alternativo es obligatorio para imágenes (mínimo 5 caracteres).');
+        setEditingError('El texto alternativo es obligatorio para imágenes (mínimo 5 caracteres).');
         return;
       }
       if (!editingFile.description || editingFile.description.trim().length < 10) {
-        alert('La descripción es obligatoria (mínimo 10 caracteres).');
+        setEditingError('La descripción es obligatoria (mínimo 10 caracteres).');
         return;
       }
 
@@ -318,7 +321,7 @@ export const MediaManager: React.FC<MediaManagerProps> = ({
       loadFiles();
       setTimeout(() => setSuccessMsg(null), 4000);
     } catch (err: any) {
-      alert(err.message || 'Error al actualizar metadatos.');
+      setEditingError(err.message || 'Error al actualizar metadatos.');
     }
   };
 
@@ -326,6 +329,7 @@ export const MediaManager: React.FC<MediaManagerProps> = ({
   const handleDeleteSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!deletingFile) return;
+    setDeletingError(null);
 
     try {
       await api.deleteMediaFile(deletingFile.id, deleteReason.trim() || 'Eliminación lógica estándar', userContext);
@@ -335,7 +339,7 @@ export const MediaManager: React.FC<MediaManagerProps> = ({
       loadFiles();
       setTimeout(() => setSuccessMsg(null), 4000);
     } catch (err: any) {
-      alert(err.message || 'Error al eliminar el archivo.');
+      setDeletingError(err.message || 'Error al eliminar el archivo.');
     }
   };
 
@@ -903,39 +907,44 @@ export const MediaManager: React.FC<MediaManagerProps> = ({
             const isImage = currentFile.mimeType.startsWith('image/');
 
             return (
-              <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-700">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-4xl w-full max-h-[92vh] overflow-hidden flex flex-col shadow-2xl border border-slate-700">
                 {/* Header */}
-                <div className="px-5 py-3.5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-emerald-400">
+                <div className="px-4 sm:px-6 py-3 bg-slate-900 text-white flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 border-b border-slate-800 shrink-0">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <span className="text-xs font-mono text-emerald-400 shrink-0">
                       [{lightboxIndex + 1} / {filteredFiles.length}]
                     </span>
-                    <h3 className="text-sm font-semibold truncate max-w-md">{currentFile.originalName}</h3>
+                    <h3 className="text-xs sm:text-sm font-semibold truncate text-white max-w-[140px] xs:max-w-xs sm:max-w-md" title={currentFile.originalName}>
+                      {currentFile.originalName}
+                    </h3>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <button
+                      type="button"
                       onClick={() => handleCopySecureUrl(currentFile)}
-                      className="px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-md flex items-center gap-1.5 transition-colors"
+                      className="px-2.5 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg flex items-center gap-1.5 transition-colors shrink-0"
                       title="Copiar URL segura"
                     >
                       <Copy className="w-3.5 h-3.5" />
-                      {copiedUrlId === currentFile.id ? '¡URL Copiada!' : 'Copiar URL'}
+                      <span className="hidden xs:inline">{copiedUrlId === currentFile.id ? '¡URL Copiada!' : 'Copiar URL'}</span>
                     </button>
 
                     <a
                       href={`/api/media/${currentFile.id}/download`}
                       target="_blank"
                       rel="noreferrer"
-                      className="px-2.5 py-1 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded-md flex items-center gap-1.5 transition-colors"
+                      className="px-3 py-1.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg flex items-center gap-1.5 transition-colors shrink-0 shadow-sm"
+                      title="Descargar archivo"
                     >
                       <Download className="w-3.5 h-3.5" />
-                      Descargar
+                      <span>Descargar</span>
                     </a>
 
                     <button
+                      type="button"
                       onClick={() => setLightboxIndex(null)}
-                      className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+                      className="p-1.5 text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg shrink-0 transition-colors cursor-pointer shadow-sm"
                       title="Cerrar (Escape)"
                     >
                       <X className="w-5 h-5" />
@@ -944,7 +953,16 @@ export const MediaManager: React.FC<MediaManagerProps> = ({
                 </div>
 
                 {/* Media Container with Previous/Next Arrows */}
-                <div className="relative flex-1 bg-slate-950 flex items-center justify-center min-h-[350px] max-h-[500px] overflow-hidden">
+                <div className="relative flex-1 bg-slate-950 flex items-center justify-center min-h-[350px] max-h-[520px] overflow-hidden">
+                  {/* Floating Close Button for Mobile Accessibility */}
+                  <button
+                    type="button"
+                    onClick={() => setLightboxIndex(null)}
+                    className="absolute right-3 top-3 p-2 bg-slate-900/80 hover:bg-slate-800 text-white border border-slate-700 rounded-full transition-colors z-20 shadow-md sm:hidden"
+                    title="Cerrar modal"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                   {/* Prev Button */}
                   <button
                     onClick={() =>

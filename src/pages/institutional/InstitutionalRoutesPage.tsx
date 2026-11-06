@@ -113,6 +113,8 @@ export const InstitutionalRoutesPage: React.FC<InstitutionalRoutesPageProps> = (
     setShowFormModal(true);
   };
 
+  const [actionNotice, setActionNotice] = useState<{ type: 'error' | 'success'; message: string } | null>(null);
+
   const handleTogglePublish = async (r: AttentionRoute) => {
     const isCurrentlyPublished = r.status === 'Publicada';
     const targetStatus: RouteState = isCurrentlyPublished ? 'Borrador' : 'Publicada';
@@ -120,7 +122,11 @@ export const InstitutionalRoutesPage: React.FC<InstitutionalRoutesPageProps> = (
     if (targetStatus === 'Publicada') {
       const inc = calculateRouteIncomplete(r);
       if (inc.length > 0) {
-        alert(`Para publicar la ruta debe completar los siguientes campos obligatorios: ${inc.join(', ')}.`);
+        setActionNotice({
+          type: 'error',
+          message: `Para publicar la ruta debe completar los siguientes campos obligatorios: ${inc.join(', ')}.`,
+        });
+        setTimeout(() => setActionNotice(null), 7000);
         return;
       }
     }
@@ -132,13 +138,22 @@ export const InstitutionalRoutesPage: React.FC<InstitutionalRoutesPageProps> = (
 
     try {
       await api.changeRouteStatus(r.id, targetStatus, `Cambio directo de estado a ${targetStatus}`, userContext);
+      setActionNotice({
+        type: 'success',
+        message: `Ruta "${r.name}" actualizada a estado ${targetStatus}.`,
+      });
+      setTimeout(() => setActionNotice(null), 4000);
       await loadData();
     } catch (err: any) {
       // Revert on error
       setRoutes((prev) =>
         prev.map((item) => (item.id === r.id ? { ...item, status: r.status } : item))
       );
-      alert(err.message || 'Error al actualizar el estado de la ruta.');
+      setActionNotice({
+        type: 'error',
+        message: err.message || 'Error al actualizar el estado de la ruta.',
+      });
+      setTimeout(() => setActionNotice(null), 6000);
     }
   };
 
@@ -156,6 +171,23 @@ export const InstitutionalRoutesPage: React.FC<InstitutionalRoutesPageProps> = (
                 {userContext.entityName || 'Mi Entidad'}
               </span>
             </div>
+
+      {actionNotice && (
+        <div
+          className={`p-3.5 rounded-xl border text-xs flex items-center gap-2 ${
+            actionNotice.type === 'success'
+              ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200'
+              : 'bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 text-rose-800 dark:text-rose-200'
+          }`}
+        >
+          {actionNotice.type === 'success' ? (
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+          ) : (
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+          )}
+          <span>{actionNotice.message}</span>
+        </div>
+      )}
             <h1 className="text-xl sm:text-2xl font-serif font-bold text-white">
               Mis Rutas de Atención Institucional
             </h1>

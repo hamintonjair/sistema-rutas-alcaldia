@@ -11,6 +11,8 @@ import {
   LogOut,
   ChevronDown,
   Terminal,
+  Menu,
+  X,
 } from 'lucide-react';
 import { UserContext } from '../../services/api';
 import { Breadcrumbs } from '../common/Breadcrumbs';
@@ -28,6 +30,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 }) => {
   const navigate = useNavigate();
   const [showDemoMenu, setShowDemoMenu] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isDevMode = process.env.NODE_ENV !== 'production';
 
@@ -35,15 +38,23 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
       {/* Top Admin Header */}
       <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-6">
-          {/* Brand */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-lg text-white">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-3">
+          {/* Brand & Mobile Toggle */}
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 text-emerald-400 bg-slate-800/90 border border-slate-700 hover:bg-slate-700 hover:text-white rounded-lg transition-colors shrink-0 shadow-xs"
+              title="Abrir menú de navegación"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-lg text-white shrink-0 shadow-xs">
               <Shield className="w-5 h-5" />
             </div>
-            <div>
-              <span className="font-bold text-base text-white block">Panel Administrativo</span>
-              <span className="text-xs text-slate-400 block -mt-1">Alcaldía Municipal de Quibdó</span>
+            <div className="truncate">
+              <span className="font-bold text-xs sm:text-base text-white block truncate">Panel Administrativo</span>
+              <span className="text-[10px] sm:text-xs text-slate-400 block -mt-1 truncate">Alcaldía Municipal de Quibdó</span>
             </div>
           </div>
 
@@ -155,6 +166,90 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             </button>
           </div>
         </div>
+
+        {/* Mobile Dropdown Navigation */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden bg-slate-900 border-t border-slate-800 px-4 py-3 space-y-1.5 text-xs font-semibold shadow-xl">
+            <NavLink
+              to="/admin"
+              end
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Resumen
+            </NavLink>
+            <NavLink
+              to="/admin/entidades"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Entidades
+            </NavLink>
+            <NavLink
+              to="/admin/usuarios"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Usuarios
+            </NavLink>
+            <NavLink
+              to="/admin/rutas"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Rutas
+            </NavLink>
+            <NavLink
+              to="/admin/auditoria"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Auditoría
+            </NavLink>
+            <NavLink
+              to="/admin/reportes"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Reportes
+            </NavLink>
+            <NavLink
+              to="/admin/ayuda"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Ayuda
+            </NavLink>
+          </div>
+        )}
       </header>
 
       {/* Dev Mode Banner */}

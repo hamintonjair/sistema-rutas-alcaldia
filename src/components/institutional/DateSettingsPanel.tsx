@@ -24,10 +24,12 @@ export const DateSettingsPanel: React.FC<DateSettingsPanelProps> = ({
 
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    setErrorMessage(null);
     try {
       await api.updateConfig(
         {
@@ -40,7 +42,7 @@ export const DateSettingsPanel: React.FC<DateSettingsPanelProps> = ({
       onRefreshConfig();
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
-      alert(err.message || 'Error al guardar la configuración');
+      setErrorMessage(err.message || 'Error al guardar la configuración');
     } finally {
       setSaving(false);
     }
@@ -58,6 +60,12 @@ export const DateSettingsPanel: React.FC<DateSettingsPanelProps> = ({
             Ajuste los plazos del cronograma institucional. Esta fecha límite no está fija en el código y puede ser modificada en cualquier momento por la Secretaría Coordinadora o Administración.
           </p>
         </div>
+
+        {errorMessage && (
+          <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg text-xs flex items-center gap-2">
+            <span>{errorMessage}</span>
+          </div>
+        )}
 
         {success && (
           <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg text-emerald-800 dark:text-emerald-200 text-xs flex items-center gap-2">

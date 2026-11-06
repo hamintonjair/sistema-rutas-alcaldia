@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Clock, LogOut, ShieldAlert } from 'lucide-react';
 
 // Layouts
 import { PublicLayout } from './components/layouts/PublicLayout';
@@ -169,6 +170,41 @@ export default function App() {
     }
   };
 
+  const [sessionExpiredModal, setSessionExpiredModal] = useState(false);
+  const lastActivityRef = useRef<number>(Date.now());
+
+  // 1-Hour Session Inactivity Auto-Logout Monitor
+  useEffect(() => {
+    if (!currentUser || currentUser.role === 'public') {
+      return;
+    }
+
+    const resetInactivityTimer = () => {
+      lastActivityRef.current = Date.now();
+    };
+
+    const activityEvents = ['mousemove', 'keydown', 'click', 'touchstart', 'scroll', 'visibilitychange'];
+    activityEvents.forEach((evt) => {
+      window.addEventListener(evt, resetInactivityTimer, { passive: true });
+    });
+
+    const ONE_HOUR_MS = 60 * 60 * 1000;
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - lastActivityRef.current;
+      if (elapsed >= ONE_HOUR_MS) {
+        handleLogout();
+        setSessionExpiredModal(true);
+      }
+    }, 10000);
+
+    return () => {
+      activityEvents.forEach((evt) => {
+        window.removeEventListener(evt, resetInactivityTimer);
+      });
+      clearInterval(interval);
+    };
+  }, [currentUser]);
+
   const handleSwitchUser = (userContext: UserContext) => {
     try {
       localStorage.setItem('quibdo_auth_user', JSON.stringify(userContext));
@@ -267,6 +303,44 @@ export default function App() {
       {/* Auth Test Runner Modal */}
       {showTestsModal && (
         <AuthTestRunnerModal onClose={() => setShowTestsModal(false)} />
+      )}
+
+      {/* Session Expired Inactivity Modal */}
+      {sessionExpiredModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-amber-200 dark:border-amber-900/50 max-w-md w-full p-6 space-y-4 text-center">
+            <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto shrink-0 shadow-inner">
+              <Clock className="w-6 h-6" />
+            </div>
+
+            <div className="space-y-1">
+              <h3 className="font-bold text-base text-slate-900 dark:text-white">
+                Sesión Finalizada por Inactividad
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-slate-300">
+                Por seguridad de la plataforma institucional de Quibdó, su sesión se ha cerrado automáticamente tras 1 hora de inactividad.
+              </p>
+            </div>
+
+            <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-200 dark:border-slate-700 text-xs text-slate-500">
+              Para ingresar nuevamente a su panel de gestión, haga clic en el botón a continuación.
+            </div>
+
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setSessionExpiredModal(false);
+                  window.location.href = '/login';
+                }}
+                className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Iniciar Sesión Nuevamente</span>
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </BrowserRouter>
   );

@@ -110,13 +110,13 @@ export const InstitutionalProfilePage: React.FC<InstitutionalProfilePageProps> =
 
     // Validate size (max 2MB)
     if (file.size > 2 * 1024 * 1024) {
-      alert('El tamaño del logo debe ser menor a 2MB (se recomienda 512x512 píxeles en formato PNG, JPG o WEBP).');
+      setErrorMessage('El tamaño del logo debe ser menor a 2MB (se recomienda 512x512 píxeles en formato PNG, JPG o WEBP).');
       return;
     }
 
     // Validate type
     if (!file.type.startsWith('image/')) {
-      alert('Solo se admiten formatos de imagen válidos (PNG, JPG, JPEG, WEBP o SVG).');
+      setErrorMessage('Solo se admiten formatos de imagen válidos (PNG, JPG, JPEG, WEBP o SVG).');
       return;
     }
 

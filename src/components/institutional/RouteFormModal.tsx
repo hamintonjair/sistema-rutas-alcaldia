@@ -227,6 +227,7 @@ export const RouteFormModal: React.FC<RouteFormModalProps> = ({
   const [selectedEnlargedImage, setSelectedEnlargedImage] = useState<string | null>(null);
   const [piiWarnings, setPiiWarnings] = useState<string[]>([]);
   const [showPiiAlertModal, setShowPiiAlertModal] = useState(false);
+  const [formNotification, setFormNotification] = useState<{ type: 'error' | 'success'; message: string } | null>(null);
   const lastLoadedRouteIdRef = useRef<string | null>(route?.id || null);
 
   // Sync state if route prop changes or is freshly provided
@@ -441,7 +442,10 @@ export const RouteFormModal: React.FC<RouteFormModalProps> = ({
     Array.from(files).forEach((file) => {
       const validFormats = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
       if (!validFormats.includes(file.type.toLowerCase())) {
-        alert(`Formato no permitido para ${file.name}. Formatos permitidos: JPG, PNG, WEBP.`);
+        setFormNotification({
+          type: 'error',
+          message: `Formato no permitido para ${file.name}. Formatos permitidos: JPG, PNG, WEBP.`,
+        });
         setUploadingImage(false);
         return;
       }
@@ -546,7 +550,10 @@ export const RouteFormModal: React.FC<RouteFormModalProps> = ({
     handlePIICheck();
 
     if (targetStatus === 'Publicada' && incompleteFields.length > 0) {
-      alert(`No es posible publicar una ruta incompleta. Complete los siguientes campos obligatorios: ${incompleteFields.join(', ')}.`);
+      setFormNotification({
+        type: 'error',
+        message: `No es posible publicar una ruta incompleta. Complete los siguientes campos obligatorios: ${incompleteFields.join(', ')}.`,
+      });
       return;
     }
 
@@ -615,11 +622,12 @@ export const RouteFormModal: React.FC<RouteFormModalProps> = ({
       if (!forceWithoutClose) {
         onClose();
       } else {
-        alert('Progreso guardado correctamente.');
+        setFormNotification({ type: 'success', message: 'Progreso guardado correctamente.' });
         setStatus(finalStatus);
+        setTimeout(() => setFormNotification(null), 4000);
       }
     } catch (err: any) {
-      alert(err.message || 'Error al guardar la ruta.');
+      setFormNotification({ type: 'error', message: err.message || 'Error al guardar la ruta.' });
     } finally {
       setSaving(false);
       setShowPiiAlertModal(false);
@@ -653,6 +661,23 @@ export const RouteFormModal: React.FC<RouteFormModalProps> = ({
         >
           {/* PII Warning Banner */}
           <PIIWarningBanner />
+
+          {formNotification && (
+            <div
+              className={`p-3.5 rounded-xl border text-xs flex items-center gap-2.5 ${
+                formNotification.type === 'error'
+                  ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200'
+                  : 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200'
+              }`}
+            >
+              {formNotification.type === 'error' ? (
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              ) : (
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              )}
+              <span>{formNotification.message}</span>
+            </div>
+          )}
 
           {/* Incomplete Fields Ribbon */}
           {incompleteFields.length > 0 && (

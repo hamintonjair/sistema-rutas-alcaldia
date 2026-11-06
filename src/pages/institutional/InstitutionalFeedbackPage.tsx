@@ -58,19 +58,22 @@ export const InstitutionalFeedbackPage: React.FC<InstitutionalFeedbackPageProps>
     setCurrentPage(1);
   }, [searchTerm, statusFilter, pageSize]);
 
+  const [responseError, setResponseError] = useState('');
+
   const handleRespond = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedReport || !response.trim()) return;
 
     setIsSubmitting(true);
+    setResponseError('');
     try {
       await api.respondToFeedbackReport(selectedReport.id, response.trim(), 'resuelto', userContext);
       setResponse('');
       setSelectedRoute(null);
       await fetchReports(true);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert('Error al enviar respuesta');
+      setResponseError(err.message || 'Error al enviar respuesta');
     } finally {
       setIsSubmitting(false);
     }

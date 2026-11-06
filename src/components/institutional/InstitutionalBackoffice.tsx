@@ -135,15 +135,19 @@ export const InstitutionalBackoffice: React.FC<InstitutionalBackofficeProps> = (
     setShowRouteModal(true);
   };
 
+  const [actionError, setActionError] = useState<string | null>(null);
+
   const handleCoordinationStatusChange = async (routeId: string, newStatus: RouteState) => {
     setActionLoading(true);
+    setActionError(null);
     try {
       await api.changeRouteStatus(routeId, newStatus, reviewComment, userContext);
       setReviewRouteId(null);
       setReviewComment('');
       loadAllData();
     } catch (err: any) {
-      alert(err.message || 'Error al cambiar estado.');
+      setActionError(err.message || 'Error al cambiar estado.');
+      setTimeout(() => setActionError(null), 5000);
     } finally {
       setActionLoading(false);
     }

@@ -15,11 +15,14 @@ export const ReportIssueModal: React.FC<ReportIssueModalProps> = ({ route, onClo
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const [formError, setFormError] = useState('');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!comments.trim()) return;
 
     setLoading(true);
+    setFormError('');
     try {
       await api.submitFeedbackReport({
         routeId: route.id,
@@ -31,9 +34,9 @@ export const ReportIssueModal: React.FC<ReportIssueModalProps> = ({ route, onClo
       setTimeout(() => {
         onClose();
       }, 2000);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert('Error al enviar el reporte. Por favor intente nuevamente.');
+      setFormError(err.message || 'Error al enviar el reporte. Por favor intente nuevamente.');
     } finally {
       setLoading(false);
     }
@@ -55,6 +58,12 @@ export const ReportIssueModal: React.FC<ReportIssueModalProps> = ({ route, onClo
 
         {/* Content */}
         <div className="p-6">
+          {formError && (
+            <div className="mb-3 p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-lg text-xs flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-red-500 shrink-0" />
+              <span>{formError}</span>
+            </div>
+          )}
           <div className="mb-4 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg text-xs border border-slate-200 dark:border-slate-700">
             <span className="font-semibold text-slate-700 dark:text-slate-300">Ruta: </span>
             <span className="text-slate-900 dark:text-white font-medium">{route.name}</span>

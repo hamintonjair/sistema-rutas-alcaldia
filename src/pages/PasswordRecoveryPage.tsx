@@ -31,6 +31,8 @@ export const PasswordRecoveryPage: React.FC = () => {
     }
   };
 
+  const [resetSuccess, setResetSuccess] = useState(false);
+
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
@@ -39,8 +41,10 @@ export const PasswordRecoveryPage: React.FC = () => {
     setLoading(true);
     try {
       await api.resetPassword(email, token, newPassword);
-      alert('¡Contraseña restablecida con éxito! Ya puede ingresar con su nueva clave.');
-      window.location.href = '/login';
+      setResetSuccess(true);
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 2500);
     } catch (err: any) {
       setErrorMessage(err.message || 'Error al actualizar la contraseña.');
     } finally {
@@ -98,11 +102,23 @@ export const PasswordRecoveryPage: React.FC = () => {
         </form>
       ) : (
         <form onSubmit={handleResetPassword} className="space-y-4 text-xs">
-          {message && (
-            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg text-emerald-800 dark:text-emerald-200 text-xs">
-              {message}
+          {resetSuccess ? (
+            <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-200 text-xs flex items-center gap-3">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+              <div>
+                <p className="font-bold">¡Contraseña restablecida con éxito!</p>
+                <p className="text-[11px] text-emerald-700 dark:text-emerald-300">
+                  Redirigiendo automáticamente a la pantalla de inicio de sesión...
+                </p>
+              </div>
             </div>
-          )}
+          ) : (
+            <>
+              {message && (
+                <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg text-emerald-800 dark:text-emerald-200 text-xs">
+                  {message}
+                </div>
+              )}
 
           <div>
             <label className="block font-semibold mb-1 text-slate-700 dark:text-slate-300">Token de Verificación:</label>
@@ -144,6 +160,8 @@ export const PasswordRecoveryPage: React.FC = () => {
               {loading ? 'Actualizando...' : 'Restablecer Contraseña'}
             </button>
           </div>
+            </>
+          )}
         </form>
       )}
     </div>
