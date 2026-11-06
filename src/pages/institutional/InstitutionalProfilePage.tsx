@@ -481,6 +481,17 @@ export const InstitutionalProfilePage: React.FC<InstitutionalProfilePageProps> =
                 Suba el escudo o logotipo institucional. Se almacena en la nube en el bucket <strong className="font-mono text-slate-700 dark:text-slate-300">logos</strong> de Supabase.
               </p>
 
+              {/* Clarification Notice */}
+              <div className="p-3 bg-amber-50 dark:bg-amber-950/30 rounded-xl border border-amber-200 dark:border-amber-800 text-[11px] text-amber-900 dark:text-amber-200 space-y-1">
+                <div className="flex items-center gap-1.5 font-bold">
+                  <Info className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                  <span>Nota de gestión institucional:</span>
+                </div>
+                <p className="text-[11px] leading-relaxed text-amber-800 dark:text-amber-300">
+                  Solo debe subir la imagen del logo <strong>en caso de que otro usuario de su entidad no lo haya cargado previamente</strong> o si requiere actualizar el logo oficial existente.
+                </p>
+              </div>
+
               {/* Standard 1:1 Live Preview Box */}
               <div className="flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 space-y-3">
                 <div className="relative group">

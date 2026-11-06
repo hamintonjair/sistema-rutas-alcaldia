@@ -167,7 +167,7 @@ export const InstitutionalHelpPage: React.FC = () => {
               <ul className="list-disc list-inside space-y-1.5 text-slate-600 dark:text-slate-300">
                 <li>Actualice la dirección de su sede principal, teléfono PBX y correo institucional oficial.</li>
                 <li>Configure el <strong>Horario de Atención al Público</strong> (ej. <em>Lunes a Viernes de 8:00 a.m. a 12:00 m. y de 2:00 p.m. a 5:00 p.m.</em>). Este horario se sincronizará automáticamente con todas las rutas y fichas de su entidad.</li>
-                <li>Suba el logotipo oficial de su entidad en formato PNG o JPG (relación 1:1, máx. 2MB), el cual se almacenará de forma segura en el bucket <code className="font-mono text-emerald-600">logos</code> de Supabase.</li>
+                <li>Suba el logotipo oficial de su entidad <strong>únicamente en caso de que otro usuario o enlace no lo haya subido previamente</strong> (o si requiere actualizar la versión oficial). El archivo se almacena de forma segura en el bucket <code className="font-mono text-emerald-600">logos</code> de Supabase (formato PNG o JPG, relación 1:1, máx. 2MB).</li>
               </ul>
             </div>
           )}
