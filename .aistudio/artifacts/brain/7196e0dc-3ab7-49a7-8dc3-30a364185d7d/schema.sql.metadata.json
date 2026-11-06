@@ -1,0 +1,5 @@
+{
+  "summary":  "Script SQL actualizado y robusto con instrucciones DROP TYPE IF EXISTS para evitar errores de tipo ya existente al recrear el esquema.",
+  "updatedAt":  "2026-10-31T18:30:43.388446117Z",
+  "userFacing":  true
+}

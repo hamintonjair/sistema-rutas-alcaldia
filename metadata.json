@@ -1,0 +1,6 @@
+{
+  "name": "Ruta Estratégica Migrante - Quibdó",
+  "description": "Plataforma Institucional para la Gestión y Publicación de la Ruta Estratégica para la Atención Integral de la Población Migrante en el Municipio de Quibdó",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
