@@ -28,7 +28,7 @@ export function exportCleanRouteTechnicalSheetPDF(route: AttentionRoute, config?
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8.5);
-  doc.text('Ruta Estratégica de Atención a Población Migrante, Refugiada y Retornada', 14, 16);
+  doc.text('Proceso Estratégico de Atención a Población Migrante, Refugiada y Retornada', 14, 16);
   doc.text(`Ficha Técnica Oficial del Servicio Institucional | Estado: ${route.status.toUpperCase()}`, 14, 21);
 
   y = 34;
@@ -191,7 +191,7 @@ export function exportCleanRouteTechnicalSheetPDF(route: AttentionRoute, config?
   doc.setFont('helvetica', 'italic');
   doc.setFontSize(7);
   doc.setTextColor(100, 116, 139);
-  doc.text('AVISO INSTITUCIONAL: Todos los trámites de esta ruta son gratuitos y no requieren intermediarios.', 14, y);
+  doc.text('AVISO INSTITUCIONAL: Todos los trámites de este proceso son gratuitos y no requieren intermediarios.', 14, y);
   doc.text('Documento oficial emitido por la Alcaldía Municipal de Quibdó. No contiene datos personales individuales (Ley 1581 de 2012).', 14, y + 3.5);
 
   const cleanFileName = route.name.toLowerCase().replace(/[^a-z0-9]/g, '_').substring(0, 35);
@@ -256,7 +256,7 @@ export function exportToWordDoc(filename: string, title: string, subtitle: strin
     <body>
       <h1>Alcaldía Municipal de Quibdó - Chocó</h1>
       <div class="subtitle">${title} - ${subtitle}</div>
-      <p><b>Fecha de Emisión:</b> ${new Date().toLocaleDateString('es-CO')} | <b>Sistema:</b> Plataforma de Rutas de Atención</p>
+      <p><b>Fecha de Emisión:</b> ${new Date().toLocaleDateString('es-CO')} | <b>Sistema:</b> Plataforma de Procesos de Atención</p>
       <hr/>
       ${htmlContent}
       <div class="footer">
@@ -356,7 +356,7 @@ export function exportRoutesToExcel(routes: AttentionRoute[], filename = 'rutas_
   const dataRows = routes.map((r, i) => ({
     '#': i + 1,
     'Estado': r.status,
-    'Nombre de la Ruta': r.name,
+    'Nombre del Proceso': r.name,
     'Servicio': r.serviceName,
     'Entidad': r.entityName,
     'Categoría': r.category,

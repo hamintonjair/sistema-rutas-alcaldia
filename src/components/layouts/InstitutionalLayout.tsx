@@ -7,6 +7,7 @@ import {
   CheckSquare,
   UserCheck,
   HelpCircle,
+  Users,
   LogOut,
   ExternalLink,
   Menu,
@@ -38,7 +39,7 @@ export const InstitutionalLayout: React.FC<InstitutionalLayoutProps> = ({
     },
     {
       to: '/mi-entidad/rutas',
-      label: 'Mis rutas',
+      label: 'Mis procesos',
       icon: FileText,
       end: false,
     },
@@ -49,9 +50,15 @@ export const InstitutionalLayout: React.FC<InstitutionalLayoutProps> = ({
       end: false,
     },
     {
-      to: '/mi-entidad/perfil',
-      label: 'Perfil institucional',
-      icon: UserCheck,
+      to: '/mi-entidad/poblacion',
+      label: 'Población',
+      icon: Users,
+      end: false,
+    },
+    {
+      to: '/mi-entidad/reportes-ciudadanos',
+      label: 'Reportes ciudadanos',
+      icon: MessageSquare,
       end: false,
     },
     {
@@ -60,11 +67,10 @@ export const InstitutionalLayout: React.FC<InstitutionalLayoutProps> = ({
       icon: FileText,
       end: false,
     },
-
     {
-      to: '/mi-entidad/reportes-ciudadanos',
-      label: 'Reportes ciudadanos',
-      icon: MessageSquare,
+      to: '/mi-entidad/perfil',
+      label: 'Perfil institucional',
+      icon: UserCheck,
       end: false,
     },
     {

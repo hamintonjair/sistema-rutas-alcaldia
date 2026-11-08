@@ -151,7 +151,7 @@ export const InstitutionalRoutesPage: React.FC<InstitutionalRoutesPageProps> = (
       );
       setActionNotice({
         type: 'error',
-        message: err.message || 'Error al actualizar el estado de la ruta.',
+        message: err.message || 'Error al actualizar el estado del proceso.',
       });
       setTimeout(() => setActionNotice(null), 6000);
     }
@@ -189,10 +189,10 @@ export const InstitutionalRoutesPage: React.FC<InstitutionalRoutesPageProps> = (
         </div>
       )}
             <h1 className="text-xl sm:text-2xl font-serif font-bold text-white">
-              Mis Rutas de Atención Institucional
+              Mis Procesos de Atención Institucional
             </h1>
             <p className="text-xs text-slate-300 max-w-2xl mt-1 leading-relaxed">
-              Cree, modifique y publique las rutas de atención oficiales de su entidad.
+              Cree, modifique y publique los procesos de atención oficiales de su entidad.
             </p>
           </div>
 
@@ -202,7 +202,7 @@ export const InstitutionalRoutesPage: React.FC<InstitutionalRoutesPageProps> = (
               className="px-3.5 py-2 text-xs font-semibold bg-white text-slate-900 hover:bg-slate-100 rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
             >
               <Plus className="w-4 h-4 text-emerald-600" />
-              <span>Nueva Ruta</span>
+              <span>Nuevo Proceso</span>
             </button>
           </div>
         </div>
@@ -210,7 +210,7 @@ export const InstitutionalRoutesPage: React.FC<InstitutionalRoutesPageProps> = (
         {/* Dynamic counters */}
         <div className="grid grid-cols-3 gap-3 pt-3 border-t border-slate-800 text-xs">
           <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700/80">
-            <span className="text-[10px] font-bold uppercase text-slate-400 block">Total Mis Rutas</span>
+            <span className="text-[10px] font-bold uppercase text-slate-400 block">Total Mis Procesos</span>
             <span className="text-xl font-bold text-white font-mono">{routes.length}</span>
           </div>
           <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700/80">
@@ -220,7 +220,7 @@ export const InstitutionalRoutesPage: React.FC<InstitutionalRoutesPageProps> = (
             </span>
           </div>
           <div className="p-3 bg-emerald-950/40 rounded-xl border border-emerald-800/60">
-            <span className="text-[10px] font-bold uppercase text-emerald-400 block">Publicadas</span>
+            <span className="text-[10px] font-bold uppercase text-emerald-400 block">Publicados</span>
             <span className="text-xl font-bold text-emerald-300 font-mono">
               {routes.filter((r) => r.status === 'Publicada').length}
             </span>
@@ -295,7 +295,7 @@ export const InstitutionalRoutesPage: React.FC<InstitutionalRoutesPageProps> = (
           {filteredRoutes.length === 0 ? (
             <div className="col-span-full py-16 text-center text-slate-500 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
               <FileText className="w-10 h-10 text-slate-400 mx-auto" />
-              <p className="font-semibold text-sm">No se encontraron rutas con los filtros seleccionados.</p>
+              <p className="font-semibold text-sm">No se encontraron procesos con los filtros seleccionados.</p>
             </div>
           ) : (
             filteredRoutes.map((r) => {
@@ -427,7 +427,7 @@ export const InstitutionalRoutesPage: React.FC<InstitutionalRoutesPageProps> = (
               <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-bold border-b border-slate-200 dark:border-slate-700 uppercase tracking-wider text-[11px]">
                 <tr>
                   <th className="p-3.5">Estado</th>
-                  <th className="p-3.5">Nombre de la Ruta</th>
+                  <th className="p-3.5">Nombre del Proceso</th>
                   <th className="p-3.5">Servicio</th>
                   <th className="p-3.5">Categoría</th>
                   <th className="p-3.5">Última Modificación</th>

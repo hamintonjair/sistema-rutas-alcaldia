@@ -43,6 +43,7 @@ export const AdminEntityDetailPage: React.FC<AdminEntityDetailPageProps> = ({ us
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'indicators' | 'users' | 'routes'>('indicators');
   const [selectedRouteForModal, setSelectedRouteForModal] = useState<AttentionRoute | null>(null);
+  const [actionBanner, setActionBanner] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const loadEntityDetail = async () => {
     if (!id) return;
@@ -61,6 +62,17 @@ export const AdminEntityDetailPage: React.FC<AdminEntityDetailPageProps> = ({ us
     loadEntityDetail();
   }, [id]);
 
+  const formatDate = (dateStr?: string | null) => {
+    if (!dateStr) return 'Reciente';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return 'Reciente';
+      return d.toLocaleDateString('es-CO');
+    } catch {
+      return 'Reciente';
+    }
+  };
+
   if (loading) {
     return <div className="py-16 text-center text-xs text-slate-500">Cargando expediente de la entidad...</div>;
   }
@@ -77,9 +89,19 @@ export const AdminEntityDetailPage: React.FC<AdminEntityDetailPageProps> = ({ us
     );
   }
 
-  const { entity, users, routes, indicators } = data;
+  const entity = data.entity;
+  const users = data.users || [];
+  const routes = data.routes || [];
+  const indicators = data.indicators || {
+    totalRoutes: routes.length,
+    draftsCount: 0,
+    inReviewCount: 0,
+    approvedCount: 0,
+    publishedCount: 0,
+    pendingObservationsCount: 0,
+    pendingCommitmentsCount: 0,
+  };
 
-  const [actionBanner, setActionBanner] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const handleResetPassword = async (usr: User) => {
     try {
@@ -391,7 +413,7 @@ export const AdminEntityDetailPage: React.FC<AdminEntityDetailPageProps> = ({ us
                           <td className="p-3 text-slate-600 dark:text-slate-400">{r.serviceName}</td>
                           <td className="p-3 text-slate-600 dark:text-slate-400">{r.channel}</td>
                           <td className="p-3 font-mono font-bold text-slate-700 dark:text-slate-300">{r.procedureSteps?.length || 0}</td>
-                          <td className="p-3 text-slate-500 font-mono text-[11px]">{new Date(r.updatedAt).toLocaleDateString('es-CO')}</td>
+                          <td className="p-3 text-slate-500 font-mono text-[11px]">{formatDate(r.updatedAt || (r as any).updated_at)}</td>
                           <td className="p-3 text-right">
                             <button
                               onClick={() => setSelectedRouteForModal(r)}

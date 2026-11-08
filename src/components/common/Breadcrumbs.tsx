@@ -11,7 +11,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ customLabelMap = {} })
   const pathnames = location.pathname.split('/').filter((x) => x);
 
   const defaultMap: Record<string, string> = {
-    rutas: 'Rutas de Atención',
+    rutas: 'Procesos de Atención',
     agenda: 'Cronograma Institucional',
     login: 'Acceso Institucional',
     'recuperar-clave': 'Recuperar Contraseña',

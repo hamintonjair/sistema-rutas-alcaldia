@@ -55,7 +55,7 @@ export const InstitutionalHub: React.FC<InstitutionalHubProps> = ({ userContext 
               <span>Espacio Privado Institucional · {userContext.entityName}</span>
             </div>
             <h1 className="text-2xl font-serif font-bold text-white">
-              Gestión de Rutas y Compromisos de {userContext.entityName || 'Mi Entidad'}
+              Gestión de Procesos y Compromisos de {userContext.entityName || 'Mi Entidad'}
             </h1>
             <p className="text-xs text-slate-300 max-w-2xl">
               Panel exclusivo de trabajo para la formulación, actualización, respuesta a devoluciones y seguimiento de acuerdos suscritos por su secretaría.
@@ -76,7 +76,7 @@ export const InstitutionalHub: React.FC<InstitutionalHubProps> = ({ userContext 
               className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors flex items-center gap-1.5 shadow-sm shrink-0"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>Nueva Ruta</span>
+              <span>Nuevo Proceso</span>
             </Link>
           </div>
         </div>
@@ -97,7 +97,7 @@ export const InstitutionalHub: React.FC<InstitutionalHubProps> = ({ userContext 
         {/* Mis Rutas Totales */}
         <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1">
           <span className="font-semibold uppercase tracking-wider text-[10px] text-slate-500 block">
-            Mis Rutas Total
+            Mis Procesos Total
           </span>
           <div className="text-2xl font-bold text-slate-900 dark:text-white">
             {kpis?.myRoutes ?? 0}
@@ -110,7 +110,7 @@ export const InstitutionalHub: React.FC<InstitutionalHubProps> = ({ userContext 
         {/* Rutas en Borrador */}
         <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1">
           <span className="font-semibold uppercase tracking-wider text-[10px] text-amber-600 block">
-            En Borrador
+            Procesos en Borrador
           </span>
           <div className="text-2xl font-bold text-amber-600">
             {kpis?.draftRoutes ?? 0}
@@ -123,7 +123,7 @@ export const InstitutionalHub: React.FC<InstitutionalHubProps> = ({ userContext 
         {/* Rutas Publicadas */}
         <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs space-y-1">
           <span className="font-semibold uppercase tracking-wider text-[10px] text-emerald-600 block">
-            Publicadas
+            Procesos Publicados
           </span>
           <div className="text-2xl font-bold text-emerald-600">
             {kpis?.publishedRoutes ?? 0}

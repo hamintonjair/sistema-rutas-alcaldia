@@ -256,14 +256,6 @@ export const InstitutionalProfilePage: React.FC<InstitutionalProfilePageProps> =
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Link
-              to="/mi-entidad/ayuda"
-              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 font-semibold text-xs transition-colors flex items-center gap-1.5 border border-slate-700 shadow-xs"
-            >
-              <HelpCircle className="w-4 h-4" />
-              <span>Centro de Ayuda</span>
-            </Link>
-
             {/* Privileged Entity Selector */}
             {isPrivileged && entities.length > 0 && (
               <div className="bg-slate-800/90 p-3 rounded-xl border border-slate-700 space-y-1">
@@ -283,6 +275,14 @@ export const InstitutionalProfilePage: React.FC<InstitutionalProfilePageProps> =
                 </select>
               </div>
             )}
+
+            <Link
+              to="/mi-entidad/ayuda"
+              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-emerald-400 font-semibold text-xs transition-colors flex items-center gap-1.5 border border-slate-700 shadow-xs h-fit self-end"
+            >
+              <HelpCircle className="w-4 h-4" />
+              <span>Centro de Ayuda</span>
+            </Link>
           </div>
         </div>
       </div>

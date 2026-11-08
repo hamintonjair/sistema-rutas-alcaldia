@@ -230,7 +230,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ userContext, con
               {(stats?.recentAuditLogs || []).slice(0, 7).map((log: any) => (
                 <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                   <td className="py-2.5 px-3 whitespace-nowrap font-mono text-slate-400">
-                    {new Date(log.timestamp).toLocaleString('es-CO')}
+                    {log.timestamp ? new Date(log.timestamp).toLocaleString('es-CO') : 'Reciente'}
                   </td>
                   <td className="py-2.5 px-3 font-semibold text-slate-900 dark:text-white whitespace-nowrap">
                     {log.userName}

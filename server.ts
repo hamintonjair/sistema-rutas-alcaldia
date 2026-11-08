@@ -48,7 +48,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+// Environment constraint: Dev server must run on port 3000 (nginx listens on 8080/PORT and proxies to 3000).
+const PORT = process.env.NODE_ENV === 'production' ? (process.env.PORT || 3000) : 3000;
 
 app.use(express.json({ limit: '10mb' }));
 
@@ -66,6 +67,7 @@ interface Database {
   observations: ObservationModel[];
   commitments: CommitmentModel[];
   mediaFiles: MediaFileModel[];
+  populationRegistrations: any[];
   recoveryTokens: Record<string, { email: string; expires: number }>;
 }
 
@@ -104,6 +106,7 @@ function loadDatabase(): Database {
         observations: Array.isArray(parsed.observations) ? parsed.observations : [],
         commitments: Array.isArray(parsed.commitments) ? parsed.commitments : [],
         mediaFiles: Array.isArray(parsed.mediaFiles) ? parsed.mediaFiles : [],
+        populationRegistrations: Array.isArray(parsed.populationRegistrations) ? parsed.populationRegistrations : [],
         recoveryTokens: parsed.recoveryTokens || {},
       };
     }
@@ -120,6 +123,7 @@ function loadDatabase(): Database {
     observations: [],
     commitments: [],
     mediaFiles: [],
+    populationRegistrations: [],
     recoveryTokens: {},
   };
 }
@@ -737,31 +741,84 @@ app.get('/api/entities', async (req: Request, res: Response) => {
 // GET /api/entities/:id (Detailed entity view with users, routes & progress indicators)
 app.get('/api/entities/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
-  if (!supabase) return res.status(503).json({ error: 'Base de datos no conectada' });
 
   try {
-    const { data: entity, error: entError } = await supabase
-      .from('entities')
-      .select('*')
-      .eq('id', id)
-      .single();
+    let entity: any = null;
 
-    if (entError || !entity) return res.status(404).json({ error: 'Entidad no encontrada.' });
+    if (supabase) {
+      const { data: ent } = await supabase
+        .from('entities')
+        .select('*')
+        .eq('id', id)
+        .maybeSingle();
+      if (ent) entity = ent;
+    }
 
-    const { data: entityUsers, error: usersError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('entity_id', id);
+    if (!entity) {
+      const localEnt = db.entities.find((e) => e.id === id);
+      if (localEnt) {
+        entity = {
+          id: localEnt.id,
+          name: localEnt.name,
+          sigla: localEnt.sigla || localEnt.code,
+          code: localEnt.code || localEnt.sigla,
+          entity_type: localEnt.entityType || 'Municipal',
+          active: localEnt.active !== false,
+          description: localEnt.description || '',
+          address: localEnt.address || '',
+          phone: localEnt.phone || '',
+          email: localEnt.email || '',
+          website: localEnt.website || '',
+          primary_responsible: localEnt.primaryResponsible || '',
+          service_hours: localEnt.serviceHours || 'Lunes a Viernes de 8:00 a.m. a 12:00 m. y de 2:00 p.m. a 5:00 p.m.',
+          logo_url: localEnt.logoUrl || '/quibdo_alcaldia_logo.png',
+        };
+      }
+    }
 
-    // For now routes are still in db.json, we'll migrate them next
-    const entityRoutes = db.routes.filter((r) => r.entityId === id);
+    if (!entity) {
+      return res.status(404).json({ error: 'Entidad no encontrada.' });
+    }
+
+    // Users for this entity
+    let entityUsers: any[] = [];
+    if (supabase) {
+      const { data: sbUsers } = await supabase
+        .from('users')
+        .select('*')
+        .eq('entity_id', id);
+      if (sbUsers && sbUsers.length > 0) {
+        entityUsers = sbUsers;
+      }
+    }
+    if (entityUsers.length === 0) {
+      entityUsers = db.users.filter((u) => u.entityId === id);
+    }
+
+    // Routes for this entity
+    let entityRoutes: any[] = [];
+    if (supabase) {
+      const { data: sbRoutes } = await supabase
+        .from('routes')
+        .select('*')
+        .eq('entity_id', id);
+      if (sbRoutes && sbRoutes.length > 0) {
+        entityRoutes = sbRoutes.map((r: any) => {
+          const existingLocal = db.routes.find((lr) => lr.id === r.id);
+          return extractMetadataAndMergeRoute(r, existingLocal);
+        });
+      }
+    }
+    if (entityRoutes.length === 0) {
+      entityRoutes = db.routes.filter((r) => r.entityId === id || (r as any).entity_id === id);
+    }
 
     // Indicators calculation
     const indicators: EntityProgressIndicators = {
       entityId: entity.id,
       entityName: entity.name,
-      entityCode: entity.code,
-      active: entity.active,
+      entityCode: entity.code || entity.sigla || '',
+      active: entity.active !== false,
       totalRoutes: entityRoutes.length,
       draftsCount: entityRoutes.filter((r) => r.status === 'Borrador').length,
       inReviewCount: entityRoutes.filter((r) => r.status === 'En revisión' || r.status === 'Enviada a revisión' || r.status === 'Devuelta para ajustes').length,
@@ -771,29 +828,40 @@ app.get('/api/entities/:id', async (req: Request, res: Response) => {
       pendingObservationsCount: entityRoutes.filter((r) => r.reviewComments && r.reviewComments.length > 0 && r.status === 'Devuelta para ajustes').length,
       pendingCommitmentsCount: entityRoutes.filter((r) => r.institutionalCommitments && r.institutionalCommitments.trim().length > 0).length,
       expiredCommitmentsCount: 0,
-      lastUpdatedAt: entityRoutes.length > 0 ? entityRoutes[0].updatedAt : entity.updated_at || entity.created_at || new Date().toISOString(),
+      lastUpdatedAt: entityRoutes.length > 0 ? (entityRoutes[0].updatedAt || entityRoutes[0].updated_at || new Date().toISOString()) : entity.updated_at || entity.created_at || new Date().toISOString(),
     };
 
     res.json({
       entity: {
         ...entity,
-        entityType: entity.entity_type,
-        logoUrl: entity.logo_url,
-        coverUrl: entity.cover_url,
-        primaryResponsible: entity.primary_responsible,
+        id: entity.id,
+        name: entity.name,
+        sigla: entity.sigla || entity.code,
+        code: entity.code || entity.sigla,
+        entityType: entity.entity_type || entity.entityType || 'Municipal',
+        logoUrl: entity.logo_url || entity.logoUrl || '/quibdo_alcaldia_logo.png',
+        logo_url: entity.logo_url || entity.logoUrl || '/quibdo_alcaldia_logo.png',
+        coverUrl: entity.cover_url || entity.coverUrl,
+        primaryResponsible: entity.primary_responsible || entity.primaryResponsible || 'Por asignar',
         serviceHours: entity.service_hours || entity.serviceHours || entity.hours || entity.general_hours || 'Lunes a Viernes de 8:00 a.m. a 12:00 m. y de 2:00 p.m. a 5:00 p.m.',
         service_hours: entity.service_hours || entity.serviceHours || entity.hours || entity.general_hours || 'Lunes a Viernes de 8:00 a.m. a 12:00 m. y de 2:00 p.m. a 5:00 p.m.',
+        address: entity.address || entity.institutional_address || entity.institutionalAddress,
+        phone: entity.phone || entity.institutional_phone || entity.institutionalPhone,
+        email: entity.email || entity.institutional_email || entity.institutionalEmail,
+        website: entity.website,
+        description: entity.description,
+        active: entity.active !== false,
       },
       users: (entityUsers || []).map((u) => ({
         id: u.id,
         name: u.name,
         email: u.email,
-        positionTitle: u.position_title,
+        positionTitle: u.position_title || u.positionTitle || 'Servidor Público / Enlace',
         phone: u.phone,
         role: u.role,
-        active: u.active,
-        createdAt: u.created_at,
-        lastAccess: u.last_access,
+        active: u.active !== false,
+        createdAt: u.created_at || u.createdAt || new Date().toISOString(),
+        lastAccess: u.last_access || u.lastAccess,
       })),
       routes: entityRoutes,
       indicators,
@@ -2385,6 +2453,140 @@ app.post('/api/feedback', async (req: Request, res: Response) => {
   res.status(201).json(newReport);
 });
 
+// Registrar población (público o institucional)
+app.post('/api/poblacion/registro', async (req: Request, res: Response) => {
+  const { nombre, tipoDocumento, numeroDocumento } = req.body;
+  if (!nombre || !tipoDocumento || !numeroDocumento) {
+    return res.status(400).json({ error: 'Datos incompletos.' });
+  }
+
+  const id = crypto.randomUUID();
+  const now = new Date().toISOString();
+  
+  // Objeto para base de datos (snake_case)
+  const dbReg = {
+    id,
+    nombre: req.body.nombre,
+    tipo_documento: req.body.tipoDocumento,
+    numero_documento: req.body.numeroDocumento,
+    telefono: req.body.telefono,
+    barrio: req.body.barrio,
+    edad: req.body.edad || req.body.rangoEdad,
+    genero: req.body.genero,
+    persona_discapacidad: !!req.body.personaDiscapacidad,
+    tiene_esposo: !!req.body.tieneEsposo,
+    esposo_nombre: req.body.esposoNombre,
+    esposo_tipo_documento: req.body.esposoTipoDocumento,
+    esposo_numero_documento: req.body.esposoNumeroDocumento,
+    esposo_edad: req.body.esposoEdad,
+    esposo_genero: req.body.esposoGenero,
+    esposo_discapacidad: !!req.body.esposoDiscapacidad,
+    tiene_hijos: !!req.body.tieneHijos,
+    hijos: Array.isArray(req.body.hijos) ? req.body.hijos : [],
+    entidad: req.body.entidad || 'portal',
+    created_at: now
+  };
+
+  // Objeto para memoria local (mantiene camelCase para consistencia con frontend existente)
+  const localReg = {
+    ...req.body,
+    id,
+    edad: req.body.edad || req.body.rangoEdad,
+    createdAt: now,
+    created_at: now
+  };
+  
+  if (!Array.isArray(db.populationRegistrations)) db.populationRegistrations = [];
+  db.populationRegistrations.unshift(localReg);
+  saveDatabase();
+
+  if (supabase) {
+    try {
+      const { error } = await supabase.from('registros_poblacion').insert(dbReg);
+      if (error) {
+        console.warn('Supabase insert failed, but saved to local db:', error.message);
+      }
+    } catch (err) {
+      console.warn('Supabase connection error, but saved to local db:', err);
+    }
+  }
+  
+  res.json({ success: true, message: 'Registro exitoso.' });
+});
+
+// Consultar registros de población
+app.get('/api/poblacion/registros', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 20;
+  const filterEntity = (req.query.entity as string) || (req.query.entidad as string) || '';
+  
+  let registrations: any[] = [];
+  let totalCount = 0;
+
+  if (supabase) {
+    try {
+      let query = supabase.from('registros_poblacion').select('*', { count: 'exact' });
+      
+      if (req.user?.role === 'institutional' && req.user.entityName) {
+        query = query.ilike('entidad', req.user.entityName);
+      } else if (filterEntity && filterEntity !== 'all') {
+        query = query.ilike('entidad', filterEntity);
+      }
+
+      const { data, count, error } = await query
+        .range((page - 1) * limit, page * limit - 1)
+        .order('created_at', { ascending: false });
+        
+      if (!error && data) {
+        // Map database snake_case back to frontend camelCase
+        registrations = data.map(r => ({
+          id: r.id,
+          nombre: r.nombre,
+          tipoDocumento: r.tipo_documento,
+          numeroDocumento: r.numero_documento,
+          telefono: r.telefono,
+          barrio: r.barrio,
+          edad: r.edad,
+          rangoEdad: r.edad, // Retro-compatibility
+          genero: r.genero,
+          personaDiscapacidad: r.persona_discapacidad,
+          tieneEsposo: r.tiene_esposo,
+          esposoNombre: r.esposo_nombre,
+          esposoTipoDocumento: r.esposo_tipo_documento,
+          esposoNumeroDocumento: r.esposo_numero_documento,
+          esposoEdad: r.esposo_edad,
+          esposoGenero: r.esposo_genero,
+          esposoDiscapacidad: r.esposo_discapacidad,
+          tieneHijos: r.tiene_hijos,
+          hijos: r.hijos,
+          entidad: r.entidad,
+          created_at: r.created_at
+        }));
+        totalCount = count || 0;
+      }
+    } catch (err) {
+      console.warn('Supabase fetch failed, falling back to local db:', err);
+    }
+  }
+
+  // Fallback a local si no hay datos de Supabase
+  if (registrations.length === 0 && totalCount === 0) {
+    let localData = Array.isArray(db.populationRegistrations) ? db.populationRegistrations : [];
+    
+    if (req.user?.role === 'institutional' && req.user.entityName) {
+      localData = localData.filter(r => (r.entidad || '').toLowerCase() === (req.user?.entityName || '').toLowerCase());
+    } else if (filterEntity && filterEntity !== 'all') {
+      localData = localData.filter(r => (r.entidad || '').toLowerCase() === filterEntity.toLowerCase());
+    }
+
+    totalCount = localData.length;
+    registrations = localData.slice((page - 1) * limit, page * limit);
+  }
+
+  res.json({ data: registrations, total: totalCount });
+});
+
+
 // PATCH /api/feedback/:id/respond
 app.patch('/api/feedback/:id/respond', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
@@ -3232,28 +3434,52 @@ app.get('/api/commitments', authMiddleware, async (req: AuthenticatedRequest, re
     try {
       const { data, error } = await supabase.from('commitments').select('*').order('created_at', { ascending: false });
       if (!error && Array.isArray(data)) {
-        db.commitments = data.map((row: any) => ({
-          id: row.id,
-          topic: row.topic,
-          agreement: row.agreement,
-          routeId: row.route_id || undefined,
-          routeName: row.route_name || undefined,
-          entityId: row.entity_id,
-          entityName: row.entity_name,
-          responsiblePerson: row.responsible_person,
-          institutionalEmail: row.institutional_email,
-          commitmentDate: row.commitment_date,
-          status: row.status,
-          progressPercentage: row.progress_percentage || 0,
-          comments: row.comments || undefined,
-          evidenceUrl: row.evidence_url || undefined,
-          evidenceName: row.evidence_name || undefined,
-          createdAt: row.created_at || new Date().toISOString(),
-          updatedAt: row.updated_at || new Date().toISOString(),
-          createdByUserId: row.created_by_user_id,
-          createdByName: row.created_by_name,
-          history: Array.isArray(row.history) ? row.history : [],
-        }));
+        let allEntities: any[] = db.entities;
+        try {
+          const { data: entList } = await supabase.from('entities').select('id, name');
+          if (entList && entList.length > 0) allEntities = entList;
+        } catch (e) {}
+
+        db.commitments = data.map((row: any) => {
+          let resolvedEntityName = (row.entity_name || '').trim();
+          if (!resolvedEntityName || resolvedEntityName.toLowerCase() === 'entidad') {
+            const entMatch = allEntities.find((e: any) => e.id === row.entity_id || e.name === row.entity_id);
+            if (entMatch && entMatch.name && entMatch.name.toLowerCase() !== 'entidad') {
+              resolvedEntityName = entMatch.name;
+            } else if (row.route_name) {
+              const rMatch = db.routes.find((r) => r.name === row.route_name || r.id === row.route_id);
+              if (rMatch && rMatch.entityName && rMatch.entityName.toLowerCase() !== 'entidad') {
+                resolvedEntityName = rMatch.entityName;
+              }
+            }
+          }
+          if (!resolvedEntityName || resolvedEntityName.toLowerCase() === 'entidad') {
+            resolvedEntityName = 'SISBEN';
+          }
+
+          return {
+            id: row.id,
+            topic: row.topic,
+            agreement: row.agreement,
+            routeId: row.route_id || undefined,
+            routeName: row.route_name || undefined,
+            entityId: row.entity_id,
+            entityName: resolvedEntityName,
+            responsiblePerson: row.responsible_person,
+            institutionalEmail: row.institutional_email,
+            commitmentDate: row.commitment_date,
+            status: row.status,
+            progressPercentage: row.progress_percentage || 0,
+            comments: row.comments || undefined,
+            evidenceUrl: row.evidence_url || undefined,
+            evidenceName: row.evidence_name || undefined,
+            createdAt: row.created_at || new Date().toISOString(),
+            updatedAt: row.updated_at || new Date().toISOString(),
+            createdByUserId: row.created_by_user_id,
+            createdByName: row.created_by_name,
+            history: Array.isArray(row.history) ? row.history : [],
+          };
+        });
         saveDatabase();
       }
     } catch (e) {
@@ -3302,6 +3528,7 @@ app.post('/api/commitments', authMiddleware, async (req: AuthenticatedRequest, r
     routeId,
     routeName,
     entityId,
+    entityName,
     responsiblePerson,
     institutionalEmail,
     commitmentDate,
@@ -3327,8 +3554,41 @@ app.post('/api/commitments', authMiddleware, async (req: AuthenticatedRequest, r
 
   // Strict RBAC: Institutional user assigns strictly to their own entity
   const targetEntityId = user.role === 'institutional' ? (user.entityId || 'ent-1') : (entityId || user.entityId || 'ent-1');
-  const entityObj = db.entities.find((e) => e.id === targetEntityId);
-  const targetEntityName = entityObj ? entityObj.name : user.entityName || 'Entidad';
+
+  // Resolve entity name accurately from payload, database, Supabase or route
+  let targetEntityName = (entityName || '').trim();
+  if (!targetEntityName || targetEntityName.toLowerCase() === 'entidad') {
+    const entityObj = db.entities.find((e) => e.id === targetEntityId || e.name === targetEntityId);
+    if (entityObj && entityObj.name && entityObj.name.toLowerCase() !== 'entidad') {
+      targetEntityName = entityObj.name;
+    }
+  }
+
+  if ((!targetEntityName || targetEntityName.toLowerCase() === 'entidad') && supabase) {
+    try {
+      const { data: entRow } = await supabase.from('entities').select('name').eq('id', targetEntityId).maybeSingle();
+      if (entRow && entRow.name) {
+        targetEntityName = entRow.name;
+      }
+    } catch (e) {
+      console.warn('Error resolviendo nombre de entidad en Supabase:', e);
+    }
+  }
+
+  if ((!targetEntityName || targetEntityName.toLowerCase() === 'entidad') && routeId) {
+    const matchedRoute = db.routes.find((r) => r.id === routeId);
+    if (matchedRoute && matchedRoute.entityName && matchedRoute.entityName.toLowerCase() !== 'entidad') {
+      targetEntityName = matchedRoute.entityName;
+    }
+  }
+
+  if ((!targetEntityName || targetEntityName.toLowerCase() === 'entidad') && user.entityName && user.entityName.toLowerCase() !== 'entidad') {
+    targetEntityName = user.entityName;
+  }
+
+  if (!targetEntityName || targetEntityName.toLowerCase() === 'entidad') {
+    targetEntityName = 'SISBEN';
+  }
 
   const piiWarnings = [
     ...checkPIIViolation(topic),

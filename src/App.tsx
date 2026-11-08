@@ -26,6 +26,8 @@ import { ScheduleView } from './components/common/ScheduleView';
 import { LoginPage } from './pages/LoginPage';
 import { PasswordRecoveryPage } from './pages/PasswordRecoveryPage';
 
+import { RegistrationPage } from './pages/public/RegistrationPage';
+
 // Admin Pages
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminEntityDetailPage } from './pages/admin/AdminEntityDetailPage';
@@ -35,6 +37,10 @@ import { DateSettingsPanel } from './components/institutional/DateSettingsPanel'
 import { AuditLogViewer } from './components/institutional/AuditLogViewer';
 import { ReportsExportPanel } from './components/institutional/ReportsExportPanel';
 import { AdminMediaPage } from './pages/admin/AdminMediaPage';
+
+import { AdminPopulationPage } from './pages/admin/AdminPopulationPage';
+import { AdminCommitmentsPage } from './pages/admin/AdminCommitmentsPage';
+import { AdminProfilePage } from './pages/admin/AdminProfilePage';
 
 // Coordinator Pages
 import { CoordinatorDashboard } from './pages/coordinator/CoordinatorDashboard';
@@ -50,6 +56,7 @@ import { InstitutionalCommitmentsPage } from './pages/institutional/Institutiona
 import { InstitutionalProfilePage } from './pages/institutional/InstitutionalProfilePage';
 import { InstitutionalMediaPage } from './pages/institutional/InstitutionalMediaPage';
 import { InstitutionalHelpPage } from './pages/institutional/InstitutionalHelpPage';
+import { InstitutionalPopulationPage } from './pages/institutional/InstitutionalPopulationPage';
 import { InstitutionalFeedbackPage } from './pages/institutional/InstitutionalFeedbackPage';
 import { InstitutionalBackoffice } from './components/institutional/InstitutionalBackoffice';
 
@@ -226,6 +233,8 @@ export default function App() {
           <Route path="/consultar-reporte" element={<ConsultFeedbackPage />} />
           <Route path="/documentacion" element={<DocumentationPage />} />
           <Route path="/agenda" element={<ScheduleView config={config} />} />
+          <Route path="/registro" element={<RegistrationPage />} />
+          <Route path="/flujograma" element={<PublicHomePage config={config} />} />
         </Route>
 
         {/* AUTHENTICATION LAYER (AuthLayout) */}
@@ -264,6 +273,10 @@ export default function App() {
             element={<InstitutionalRoutesPage userContext={currentUser} />}
           />
           <Route
+            path="/admin/compromisos"
+            element={<AdminCommitmentsPage userContext={currentUser} />}
+          />
+          <Route
             path="/admin/configuracion"
             element={<DateSettingsPanel config={config} userContext={currentUser} onRefreshConfig={loadData} />}
           />
@@ -273,6 +286,16 @@ export default function App() {
             element={<ReportsExportPanel routes={routes} config={config} userContext={currentUser} />}
           />
           <Route path="/admin/ayuda" element={<InstitutionalHelpPage />} />
+          <Route path="/admin/poblacion" element={<AdminPopulationPage userContext={currentUser} />} />
+          <Route
+            path="/admin/perfil"
+            element={
+              <AdminProfilePage
+                userContext={currentUser}
+                onUpdateUser={(updated) => setCurrentUser((prev) => ({ ...prev, ...updated }))}
+              />
+            }
+          />
         </Route>
 
         {/* Redirect former coordinator path to admin */}
@@ -293,6 +316,7 @@ export default function App() {
           <Route path="/mi-entidad/perfil" element={<InstitutionalProfilePage userContext={currentUser} />} />
           <Route path="/mi-entidad/archivos" element={<InstitutionalMediaPage userContext={currentUser} />} />
           <Route path="/mi-entidad/ayuda" element={<InstitutionalHelpPage />} />
+          <Route path="/mi-entidad/poblacion" element={<InstitutionalPopulationPage userContext={currentUser} />} />
           <Route path="/mi-entidad/reportes-ciudadanos" element={<InstitutionalFeedbackPage userContext={currentUser} />} />
         </Route>
 

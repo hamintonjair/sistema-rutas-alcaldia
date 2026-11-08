@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Building2, Calendar, LogIn, ShieldAlert, Menu, X } from 'lucide-react';
+import { Building2, Calendar, LogIn, ShieldAlert, Menu, X, GitCommit, UserPlus } from 'lucide-react';
 import { SystemConfig } from '../../types';
 import { Breadcrumbs } from '../common/Breadcrumbs';
 
@@ -44,7 +44,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
             />
             <div className="min-w-0 truncate">
               <span className="text-xs sm:text-base font-bold tracking-tight text-white block truncate">
-                Ruta Estratégica Migrante
+                Proceso Estratégico Migrante
               </span>
               <span className="text-[10px] sm:text-xs text-emerald-400 font-semibold block -mt-1 truncate">
                 Alcaldía de Quibdó
@@ -65,6 +65,19 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
             >
               Inicio
             </NavLink>
+            <a
+              href="/#flujograma"
+              onClick={(e) => {
+                if (location.pathname === '/') {
+                  e.preventDefault();
+                  document.getElementById('flujograma')?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="whitespace-nowrap transition-colors py-1 px-2 rounded-lg bg-emerald-950/80 hover:bg-emerald-900/90 border border-emerald-500/40 text-emerald-300 hover:text-emerald-200 flex items-center gap-1.5 cursor-pointer font-bold shadow-xs"
+            >
+              <GitCommit className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span>Flujograma de la Ruta</span>
+            </a>
             <NavLink
               to="/rutas"
               className={({ isActive }) =>
@@ -73,7 +86,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
                 }`
               }
             >
-              Catálogo de Rutas
+              Catálogo de Procesos
             </NavLink>
             <NavLink
               to="/entidades"
@@ -134,6 +147,28 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
             >
               Inicio
             </NavLink>
+            <a
+              href="/#flujograma"
+              onClick={(e) => {
+                setMobileMenuOpen(false);
+                if (location.pathname === '/') {
+                  e.preventDefault();
+                  document.getElementById('flujograma')?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="flex items-center gap-2 py-2.5 px-3 rounded-lg bg-emerald-950/80 text-emerald-300 font-bold border border-emerald-500/40"
+            >
+              <GitCommit className="w-4 h-4 text-emerald-400" />
+              <span>Flujograma de la Ruta</span>
+            </a>
+            <Link
+              to="/registro"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center gap-2 py-2.5 px-3 rounded-lg bg-emerald-600 text-white font-bold shadow-sm"
+            >
+              <UserPlus className="w-4 h-4 text-white" />
+              <span>¿Eres nuevo? Regístrate aquí</span>
+            </Link>
             <NavLink
               to="/rutas"
               onClick={() => setMobileMenuOpen(false)}
@@ -143,7 +178,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
                 }`
               }
             >
-              Catálogo de Rutas
+              Catálogo de Procesos
             </NavLink>
             <NavLink
               to="/entidades"

@@ -262,7 +262,7 @@ export const InstitutionalObservationsPage: React.FC<InstitutionalObservationsPa
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-xl sm:text-2xl font-serif font-bold text-white">
-              Observaciones y Propuestas de Ajuste a la Ruta
+              Observaciones y Propuestas de Ajuste al Proceso
             </h1>
             <p className="text-xs text-slate-300 max-w-2xl mt-1">
               Espacio exclusivo de {userContext.entityName || 'su entidad'} para registrar observaciones técnicas, identificar cuellos de botella y plantear ajustes antes de la concertación final con Coordinación.
@@ -387,7 +387,7 @@ export const InstitutionalObservationsPage: React.FC<InstitutionalObservationsPa
                     {getPriorityBadge(obs.priority)}
                     {getStatusBadge(obs.status)}
                     <span className="text-[11px] text-slate-500">
-                      Ruta: <strong className="text-slate-800 dark:text-slate-200">{obs.routeName}</strong>
+                      Proceso: <strong className="text-slate-800 dark:text-slate-200">{obs.routeName}</strong>
                     </span>
                   </div>
                   <h3 className="text-base font-bold text-slate-900 dark:text-white">
@@ -411,7 +411,7 @@ export const InstitutionalObservationsPage: React.FC<InstitutionalObservationsPa
                 {obs.currentProposal && (
                   <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 space-y-1">
                     <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block">
-                      Qué plantea la Ruta actualmente
+                      Qué plantea el Proceso actualmente
                     </span>
                     <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
                       {obs.currentProposal}
@@ -455,7 +455,7 @@ export const InstitutionalObservationsPage: React.FC<InstitutionalObservationsPa
                   <div className="flex items-center justify-between text-[11px] font-bold text-blue-800 dark:text-blue-300">
                     <span className="flex items-center gap-1.5">
                       <MessageSquare className="w-3.5 h-3.5" />
-                      Respuesta del Coordinador de la Ruta ({obs.coordinatorResponderName || 'Coordinación'})
+                      Respuesta del Coordinador del Proceso ({obs.coordinatorResponderName || 'Coordinación'})
                     </span>
                     {obs.coordinatorResponseDate && (
                       <span className="font-normal text-blue-600 dark:text-blue-400">
@@ -535,7 +535,7 @@ export const InstitutionalObservationsPage: React.FC<InstitutionalObservationsPa
               {/* Ruta Relacionada */}
               <div className="space-y-1">
                 <label className="font-semibold text-slate-700 dark:text-slate-300">
-                  Ruta relacionada *
+                  Proceso relacionado *
                 </label>
                 <select
                   value={routeId}
@@ -588,7 +588,7 @@ export const InstitutionalObservationsPage: React.FC<InstitutionalObservationsPa
               {/* Qué plantea la Ruta */}
               <div className="space-y-1">
                 <label className="font-semibold text-slate-700 dark:text-slate-300">
-                  Qué plantea la Ruta actualmente
+                  Qué plantea el Proceso actualmente
                 </label>
                 <textarea
                   value={currentProposal}

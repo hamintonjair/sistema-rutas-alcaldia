@@ -247,7 +247,7 @@
       ],
       "institutionalAddress": "Carrera 12 # 46-136",
       "institutionalPhone": "3124943527",
-      "institutionalEmail": "ing.haminton@outlook.com",
+      "institutionalEmail": "contacto@quibdo.gov.co",
       "serviceHours": "Lunes a Viernes 8:00 AM - 12:00 PM / 2:00 PM - 5:00 PM",
       "estimatedResponseTime": "3 a 5 días hábiles",
       "procedureSteps": [
@@ -355,7 +355,7 @@
       ],
       "status": "Publicada",
       "createdAt": "2026-11-02T22:36:32.695+00:00",
-      "updatedAt": "2026-11-05T18:57:33.14+00:00",
+      "updatedAt": "2026-11-06T20:03:22.826+00:00",
       "createdByUserId": "3b6beb0d-68b0-4354-90fe-17c5cca4ae1a",
       "createdByUserName": "Prueba sisben",
       "updatedByUserId": "3b6beb0d-68b0-4354-90fe-17c5cca4ae1a",
@@ -460,9 +460,9 @@
           "order": 3
         }
       ],
-      "status": "Publicada",
+      "status": "Borrador",
       "createdAt": "2026-11-05T12:58:38.162+00:00",
-      "updatedAt": "2026-11-05T12:59:06.205+00:00",
+      "updatedAt": "2026-11-06T20:02:12.127+00:00",
       "createdByUserId": "3b6beb0d-68b0-4354-90fe-17c5cca4ae1a",
       "createdByUserName": "Prueba sisben",
       "updatedByUserId": "3b6beb0d-68b0-4354-90fe-17c5cca4ae1a",
@@ -595,9 +595,9 @@
           "order": 2
         }
       ],
-      "status": "Publicada",
+      "status": "Borrador",
       "createdAt": "2026-11-05T12:39:15.484+00:00",
-      "updatedAt": "2026-11-05T18:55:44.726+00:00",
+      "updatedAt": "2026-11-08T12:47:22.507+00:00",
       "createdByUserId": "3b6beb0d-68b0-4354-90fe-17c5cca4ae1a",
       "createdByUserName": "Prueba sisben",
       "updatedByUserId": "3b6beb0d-68b0-4354-90fe-17c5cca4ae1a",
@@ -711,7 +711,7 @@
       "articulatedEntityIds": [],
       "institutionalOfficer": "prueba salud",
       "technicalObservations": "",
-      "institutionalCommitments": "",
+      "institutionalCommitments": "[En proceso - 15%] Se removieron los botones de registro de nuevos compromisos, edición, eliminación y sincronización con Supabase. (2026-12-08): Se removieron los botones de registro de nuevos compromisos, edición, eliminación y sincronización con Supabase.",
       "nextReviewDate": "2027-02-03",
       "mainImageUrl": "/src/assets/images/quibdo_alcaldia_logo_1793464458662.jpg",
       "mainImageAlt": "Atención Institucional de la Alcaldía de Quibdó",
@@ -733,7 +733,7 @@
       ],
       "status": "Publicada",
       "createdAt": "2026-11-05T21:12:23.223+00:00",
-      "updatedAt": "2026-11-05T21:12:28.166+00:00",
+      "updatedAt": "2026-11-08T12:48:15.692+00:00",
       "createdByUserId": "8de32fcf-8843-48e4-9b93-4aa11b1d962f",
       "createdByUserName": "prueba salud",
       "updatedByUserId": "8de32fcf-8843-48e4-9b93-4aa11b1d962f",
@@ -1413,7 +1413,7 @@
       "uploadedByUserName": "Sistema",
       "uploadedAt": "2026-11-05T12:58:38.162+00:00",
       "status": "active",
-      "isPublic": true
+      "isPublic": false
     },
     {
       "id": "img-1793883470498-0.07544080762947769",
@@ -1435,7 +1435,7 @@
       "uploadedByUserName": "Sistema",
       "uploadedAt": "2026-11-05T12:58:38.162+00:00",
       "status": "active",
-      "isPublic": true
+      "isPublic": false
     },
     {
       "id": "img-1793883470615-0.3172519789868956",
@@ -1457,7 +1457,7 @@
       "uploadedByUserName": "Sistema",
       "uploadedAt": "2026-11-05T12:58:38.162+00:00",
       "status": "active",
-      "isPublic": true
+      "isPublic": false
     },
     {
       "id": "img-1793883470685-0.6354625906683212",
@@ -1479,7 +1479,7 @@
       "uploadedByUserName": "Sistema",
       "uploadedAt": "2026-11-05T12:58:38.162+00:00",
       "status": "active",
-      "isPublic": true
+      "isPublic": false
     },
     {
       "id": "med-main-rut-1793882355484",
@@ -1501,7 +1501,7 @@
       "uploadedByUserName": "Sistema",
       "uploadedAt": "2026-11-05T12:39:15.484+00:00",
       "status": "active",
-      "isPublic": true
+      "isPublic": false
     },
     {
       "id": "img-1793882347850-0.8637689594826334",
@@ -1523,7 +1523,7 @@
       "uploadedByUserName": "Sistema",
       "uploadedAt": "2026-11-05T12:39:15.484+00:00",
       "status": "active",
-      "isPublic": true
+      "isPublic": false
     },
     {
       "id": "img-1793882347867-0.7296837457907756",
@@ -1545,7 +1545,7 @@
       "uploadedByUserName": "Sistema",
       "uploadedAt": "2026-11-05T12:39:15.484+00:00",
       "status": "active",
-      "isPublic": true
+      "isPublic": false
     },
     {
       "id": "med-main-rut-1793913143223",
@@ -1614,5 +1614,6 @@
       "isPublic": true
     }
   ],
+  "populationRegistrations": [],
   "recoveryTokens": {}
 }

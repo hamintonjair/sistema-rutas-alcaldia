@@ -642,7 +642,7 @@ export const RouteFormModal: React.FC<RouteFormModalProps> = ({
           <div>
             <h2 className="font-bold text-base sm:text-lg flex items-center gap-2">
               <Building2 className="w-5 h-5 text-emerald-400" />
-              <span>{isEditing ? `Editar Ruta: ${route.name}` : 'Registrar Nueva Ruta de Atención (Fase 3)'}</span>
+              <span>{isEditing ? `Editar Proceso: ${route.name}` : 'Registrar Nuevo Proceso de Atención (Fase 3)'}</span>
             </h2>
             <p className="text-xs text-slate-400">
               Carga institucional completa con campos dinámicos, imágenes y verificación de PII
@@ -747,12 +747,12 @@ export const RouteFormModal: React.FC<RouteFormModalProps> = ({
             </div>
 
             <div>
-              <label className="block font-semibold mb-1">Nombre Oficial de la Ruta de Atención:</label>
+              <label className="block font-semibold mb-1">Nombre Oficial del Proceso de Atención:</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Ej: Ruta de Atención en Salud Integral para Mujeres Embarazadas Migrantes"
+                placeholder="Ej: Proceso de Atención en Salud Integral para Mujeres Embarazadas Migrantes"
                 className="w-full p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-emerald-500 font-bold"
                 required
               />

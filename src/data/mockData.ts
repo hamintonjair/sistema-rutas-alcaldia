@@ -620,3 +620,5 @@ export const INITIAL_MEDIA_FILES: MediaFileModel[] = [
     isPublic: false, // Private review support file
   },
 ];
+
+export const INITIAL_POPULATION_REGISTRATIONS: any[] = [];

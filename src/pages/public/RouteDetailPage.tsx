@@ -105,7 +105,7 @@ export const RouteDetailPage: React.FC<RouteDetailPageProps> = ({ config }) => {
           <FileText className="w-8 h-8" />
         </div>
         <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-          Ruta de Atención No Encontrada
+          Proceso de Atención No Encontrado
         </h1>
         <p className="text-xs text-slate-500 max-w-md mx-auto">
           La ruta solicitada no existe, se encuentra en fase de borrador o ha sido despublicada temporalmente por la entidad competente.
@@ -116,7 +116,7 @@ export const RouteDetailPage: React.FC<RouteDetailPageProps> = ({ config }) => {
             className="px-4 py-2 rounded-xl bg-emerald-600 text-white font-semibold text-xs inline-flex items-center gap-1.5"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Volver al Catálogo de Rutas</span>
+            <span>Volver al Catálogo de Procesos</span>
           </Link>
         </div>
       </div>
@@ -308,7 +308,7 @@ export const RouteDetailPage: React.FC<RouteDetailPageProps> = ({ config }) => {
         <section className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
           <div className="border-b border-slate-100 dark:border-slate-800 pb-2">
             <h2 className="text-base font-bold text-slate-900 dark:text-white">
-              Resumen Institucional de la Ruta
+              Resumen Institucional del Proceso
             </h2>
           </div>
 

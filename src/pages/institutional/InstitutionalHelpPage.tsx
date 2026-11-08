@@ -39,7 +39,7 @@ export const InstitutionalHelpPage: React.FC = () => {
           Centro de Ayuda y Manual del Enlace Institucional
         </h1>
         <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
-          Instrucciones detalladas para la estructuración de rutas de atención integral, gestión del perfil, carga segura de archivos en Supabase y cumplimiento de la normativa de protección de datos personales (PII) en Quibdó.
+          Instrucciones detalladas para la estructuración de procesos de atención integral, gestión del perfil, carga segura de archivos en Supabase y cumplimiento de la normativa de protección de datos personales (PII) en Quibdó.
         </p>
       </div>
 
@@ -88,7 +88,7 @@ export const InstitutionalHelpPage: React.FC = () => {
               <div className="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center font-bold text-xs shrink-0">
                 1
               </div>
-              <span>Paso a Paso para Crear y Publicar una Ruta de Atención</span>
+              <span>Paso a Paso para Crear y Publicar un Proceso de Atención</span>
             </div>
             {openSection === 1 ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
           </button>
@@ -96,7 +96,7 @@ export const InstitutionalHelpPage: React.FC = () => {
           {openSection === 1 && (
             <div className="px-6 pb-6 pt-2 space-y-4 text-xs sm:text-sm text-slate-700 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800">
               <p className="leading-relaxed">
-                Cada ruta creada por su entidad debe reflejar con absoluta precisión los trámites y canales disponibles para los ciudadanos. Siga estas fases en el formulario de registro:
+                Cada proceso creado por su entidad debe reflejar con absoluta precisión los trámites y canales disponibles para los ciudadanos. Siga estas fases en el formulario de registro:
               </p>
 
               <div className="space-y-3">
@@ -136,7 +136,7 @@ export const InstitutionalHelpPage: React.FC = () => {
                     <span>Fase 4: Canales Oficiales y Verificación de Completitud</span>
                   </h4>
                   <p className="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
-                    El sistema verificará automáticamente que no falten campos obligatorios. Una vez completa, podrá hacer clic en <strong>Publicar Ruta</strong> para que aparezca instantáneamente en el portal público de Quibdó.
+                    El sistema verificará automáticamente que no falten campos obligatorios. Una vez completa, podrá hacer clic en <strong>Publicar Proceso</strong> para que aparezca instantáneamente en el portal público de Quibdó.
                   </p>
                 </div>
               </div>
@@ -166,7 +166,7 @@ export const InstitutionalHelpPage: React.FC = () => {
               </p>
               <ul className="list-disc list-inside space-y-1.5 text-slate-600 dark:text-slate-300">
                 <li>Actualice la dirección de su sede principal, teléfono PBX y correo institucional oficial.</li>
-                <li>Configure el <strong>Horario de Atención al Público</strong> (ej. <em>Lunes a Viernes de 8:00 a.m. a 12:00 m. y de 2:00 p.m. a 5:00 p.m.</em>). Este horario se sincronizará automáticamente con todas las rutas y fichas de su entidad.</li>
+                <li>Configure el <strong>Horario de Atención al Público</strong> (ej. <em>Lunes a Viernes de 8:00 a.m. a 12:00 m. y de 2:00 p.m. a 5:00 p.m.</em>). Este horario se sincronizará automáticamente con todos los procesos y fichas de su entidad.</li>
                 <li>Suba el logotipo oficial de su entidad <strong>únicamente en caso de que otro usuario o enlace no lo haya subido previamente</strong> (o si requiere actualizar la versión oficial). El archivo se almacena de forma segura en el bucket <code className="font-mono text-emerald-600">logos</code> de Supabase (formato PNG o JPG, relación 1:1, máx. 2MB).</li>
               </ul>
             </div>

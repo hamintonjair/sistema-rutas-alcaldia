@@ -624,5 +624,38 @@ export const api = {
     const res = await fetch('/api/tests/fase9');
     return parseJsonResponse(res);
   },
+
+  async savePopulationRegistration(
+    data: any,
+    userContext?: UserContext
+  ): Promise<{ success: boolean; message: string }> {
+    const res = await fetch('/api/poblacion/registro', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(userContext ? getAuthHeaders(userContext) : {}),
+      },
+      body: JSON.stringify(data),
+    });
+    return parseJsonResponse(res);
+  },
+
+  async getPopulationRegistrations(
+    page: number = 1,
+    limit: number = 20,
+    userContext: UserContext,
+    entity?: string
+  ): Promise<{ data: any[]; total: number }> {
+    const query = new URLSearchParams();
+    query.set('page', String(page));
+    query.set('limit', String(limit));
+    if (entity && entity !== 'all') {
+      query.set('entity', entity);
+    }
+    const res = await fetch(`/api/poblacion/registros?${query.toString()}`, {
+      headers: getAuthHeaders(userContext),
+    });
+    return parseJsonResponse(res);
+  },
 };
 

@@ -13,6 +13,7 @@ import {
   Terminal,
   Menu,
   X,
+  User,
 } from 'lucide-react';
 import { UserContext } from '../../services/api';
 import { Breadcrumbs } from '../common/Breadcrumbs';
@@ -63,7 +64,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             </div>
           </div>
 
-          {/* Admin Navigation Menu */}
+          {/* Admin Navigation Menu - Coherent Ordering */}
           <nav className="hidden lg:flex items-center gap-1 text-xs font-semibold">
             <NavLink
               to="/admin"
@@ -107,20 +108,29 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 }`
               }
             >
-              Rutas
+              Procesos
             </NavLink>
 
-
-
             <NavLink
-              to="/admin/auditoria"
+              to="/admin/compromisos"
               className={({ isActive }) =>
                 `px-3 py-1.5 rounded-lg transition-colors ${
                   isActive ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800'
                 }`
               }
             >
-              Auditoría
+              Compromisos
+            </NavLink>
+
+            <NavLink
+              to="/admin/poblacion"
+              className={({ isActive }) =>
+                `px-3 py-1.5 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800'
+                }`
+              }
+            >
+              Población
             </NavLink>
 
             <NavLink
@@ -134,7 +144,27 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               Reportes
             </NavLink>
 
+            <NavLink
+              to="/admin/auditoria"
+              className={({ isActive }) =>
+                `px-3 py-1.5 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800'
+                }`
+              }
+            >
+              Auditoría
+            </NavLink>
 
+            <NavLink
+              to="/admin/perfil"
+              className={({ isActive }) =>
+                `px-3 py-1.5 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white' : 'text-slate-300 hover:bg-slate-800'
+                }`
+              }
+            >
+              Perfil
+            </NavLink>
 
             <NavLink
               to="/admin/ayuda"
@@ -149,8 +179,18 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           </nav>
 
           {/* User Profile & Actions */}
-          <div className="flex items-center gap-3 shrink-0">
-            {/* Separate Public Preview Link as required by Admin rule 1 */}
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Quick Profile Link */}
+            <Link
+              to="/admin/perfil"
+              className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 transition-colors flex items-center gap-1.5"
+              title="Mi Perfil de Administrador"
+            >
+              <User className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="hidden sm:inline font-medium">{userContext.name || 'Perfil Admin'}</span>
+            </Link>
+
+            {/* Separate Public Preview Link */}
             <Link
               to="/"
               target="_blank"
@@ -164,7 +204,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             {/* Logout */}
             <button
               onClick={onLogout}
-              className="px-3 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-xs font-semibold border border-rose-800 transition-colors flex items-center gap-1"
+              className="px-3 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900 text-rose-300 text-xs font-semibold border border-rose-800 transition-colors flex items-center gap-1 cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Salir</span>
@@ -172,7 +212,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           </div>
         </div>
 
-        {/* Mobile Dropdown Navigation */}
+        {/* Mobile Dropdown Navigation - Coherent Ordering */}
         {mobileMenuOpen && (
           <div className="lg:hidden bg-slate-900 border-t border-slate-800 px-4 py-3 space-y-1.5 text-xs font-semibold shadow-xl">
             <NavLink
@@ -218,7 +258,40 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 }`
               }
             >
-              Rutas
+              Procesos
+            </NavLink>
+            <NavLink
+              to="/admin/compromisos"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Compromisos
+            </NavLink>
+            <NavLink
+              to="/admin/poblacion"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Población
+            </NavLink>
+            <NavLink
+              to="/admin/reportes"
+              onClick={() => setMobileMenuOpen(false)}
+              className={({ isActive }) =>
+                `block py-2 px-3 rounded-lg transition-colors ${
+                  isActive ? 'bg-emerald-600 text-white font-bold' : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`
+              }
+            >
+              Reportes
             </NavLink>
             <NavLink
               to="/admin/auditoria"
@@ -232,7 +305,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               Auditoría
             </NavLink>
             <NavLink
-              to="/admin/reportes"
+              to="/admin/perfil"
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) =>
                 `block py-2 px-3 rounded-lg transition-colors ${
@@ -240,7 +313,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 }`
               }
             >
-              Reportes
+              Perfil
             </NavLink>
             <NavLink
               to="/admin/ayuda"

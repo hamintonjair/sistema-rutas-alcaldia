@@ -292,5 +292,27 @@ DROP TABLE IF EXISTS "Compromisos" CASCADE;
 DROP TABLE IF EXISTS "entidades" CASCADE;
 DROP TABLE IF EXISTS "Observaciones" CASCADE;
 DROP TABLE IF EXISTS "Rutas" CASCADE;
+
 DROP TABLE IF EXISTS "Usuarios" CASCADE;
 
+CREATE TABLE registros_poblacion (
+    id UUID PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    tipo_documento VARCHAR(50) NOT NULL,
+    numero_documento VARCHAR(50) NOT NULL,
+    telefono VARCHAR(50),
+    barrio VARCHAR(100),
+    rango_edad VARCHAR(50),
+    genero VARCHAR(50),
+    persona_discapacidad BOOLEAN DEFAULT FALSE,
+    tiene_esposo BOOLEAN DEFAULT FALSE,
+    esposo_nombre VARCHAR(255),
+    esposo_tipo_documento VARCHAR(50),
+    esposo_numero_documento VARCHAR(50),
+    esposo_edad VARCHAR(50),
+    esposo_discapacidad BOOLEAN DEFAULT FALSE,
+    tiene_hijos BOOLEAN DEFAULT FALSE,
+    hijos JSONB DEFAULT '[]'::jsonb,
+    entidad VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

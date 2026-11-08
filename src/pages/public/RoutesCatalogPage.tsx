@@ -169,15 +169,15 @@ export const RoutesCatalogPage: React.FC<RoutesCatalogPageProps> = ({ config }) 
         <div className="max-w-7xl mx-auto space-y-3">
           <div className="flex items-center gap-2 text-xs text-emerald-400 font-semibold">
             <Layers className="w-4 h-4" />
-            <span>Catálogo Oficial de Rutas · Municipio de Quibdó</span>
+            <span>Catálogo Oficial de Procesos · Municipio de Quibdó</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-white">
-            Rutas de Atención Institucional Aprobadas
+            Procesos de Atención Institucional Aprobados
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
-            Consulte y filtre las rutas vigentes y aprobadas para la población migrante en Quibdó. Toda la información ha sido validada directamente por las 19 entidades competentes.
+            Consulte y filtre los procesos vigentes y aprobados para la población migrante en Quibdó. Toda la información ha sido validada directamente por las 19 entidades competentes.
           </p>
         </div>
       </div>
@@ -372,7 +372,7 @@ export const RoutesCatalogPage: React.FC<RoutesCatalogPageProps> = ({ config }) 
             {/* Results count & active query badges */}
             <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
               <span>
-                Mostrando <strong>{filteredRoutes.length}</strong> {filteredRoutes.length === 1 ? 'ruta aprobada' : 'rutas aprobadas'}
+                Mostrando <strong>{filteredRoutes.length}</strong> {filteredRoutes.length === 1 ? 'proceso aprobado' : 'procesos aprobados'}
               </span>
 
               {activeFiltersCount > 0 && (
@@ -412,7 +412,7 @@ export const RoutesCatalogPage: React.FC<RoutesCatalogPageProps> = ({ config }) 
                 </div>
                 <div className="space-y-1">
                   <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                    No se encontraron rutas con los criterios seleccionados
+                    No se encontraron procesos con los criterios seleccionados
                   </h3>
                   <p className="text-xs text-slate-500 max-w-md mx-auto">
                     Intente buscar con otros términos, seleccionar otra entidad o restablecer los filtros aplicados.
@@ -507,7 +507,7 @@ export const RoutesCatalogPage: React.FC<RoutesCatalogPageProps> = ({ config }) 
                           to={`/rutas/${routeSlug}`}
                           className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs text-center transition-colors shadow-xs"
                         >
-                          Ver ruta completa
+                          Ver proceso completo
                         </Link>
                         <button
                           type="button"
