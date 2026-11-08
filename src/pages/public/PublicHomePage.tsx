@@ -829,20 +829,20 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ config }) => {
                 <span>Alcaldía Municipal de Quibdó</span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Secretaría de Gobierno y Secretaría Coordinadora del Proceso de Atención a Población Migrante.
+                {config?.alcaldiaSubtitle || 'Secretaría de Gobierno y Secretaría Coordinadora del Proceso de Atención a Población Migrante.'}
               </p>
               <div className="space-y-1.5 text-xs text-slate-300">
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Carrera 2 No. 24-45, Palacio Municipal, Quibdó - Chocó</span>
+                  <span>{config?.alcaldiaAddress || 'Carrera 2 No. 24-45, Palacio Municipal, Quibdó - Chocó'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>PBX Municipal: (604) 671 0000 · Línea Gratuita: 01 8000 910 120</span>
+                  <span>{config?.alcaldiaPhone || 'PBX Municipal: (604) 671 0000 · Línea Gratuita: 01 8000 910 120'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>contacto@quibdo-choco.gov.co</span>
+                  <span>{config?.alcaldiaEmail || 'contacto@quibdo-choco.gov.co'}</span>
                 </div>
               </div>
             </div>
@@ -854,10 +854,11 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ config }) => {
                 <span>Horario General de Atención</span>
               </div>
               <div className="text-xs text-slate-300 space-y-1.5">
-                <p><strong>Lunes a Viernes:</strong></p>
-                <p>8:00 a.m. a 12:00 m. y de 2:00 p.m. a 5:00 p.m.</p>
+                <p className="font-semibold text-slate-200">
+                  {config?.alcaldiaSchedule || 'Lunes a Viernes: 8:00 a.m. a 12:00 m. y de 2:00 p.m. a 5:00 p.m.'}
+                </p>
                 <p className="text-slate-400 text-[11px] pt-1">
-                  Atención prioritaria para mujeres gestantes, personas con discapacidad y adultos mayores.
+                  {config?.alcaldiaScheduleNote || 'Atención prioritaria para mujeres gestantes, personas con discapacidad y adultos mayores.'}
                 </p>
               </div>
             </div>

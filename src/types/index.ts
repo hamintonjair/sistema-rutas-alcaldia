@@ -61,7 +61,6 @@ export interface UserModel {
   password_hash?: string;
   positionTitle?: string;
   position_title?: string;
-  phone?: string;
   role: SystemRole;
   role_id?: string;
   role_code?: SystemRole;
@@ -70,8 +69,6 @@ export interface UserModel {
   entityName?: string;
   entity_name?: string;
   active: boolean;
-  photoUrl?: string;
-  photo_url?: string;
   createdAt?: string;
   created_at?: string;
   lastAccess?: string;
@@ -285,6 +282,12 @@ export interface SystemConfig {
   categories: string[];
   targetPopulations: string[];
   channels: string[];
+  alcaldiaAddress?: string;
+  alcaldiaPhone?: string;
+  alcaldiaEmail?: string;
+  alcaldiaSchedule?: string;
+  alcaldiaScheduleNote?: string;
+  alcaldiaSubtitle?: string;
 }
 export interface AuditLog extends AuditLogModel {
   userId: string;

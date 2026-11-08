@@ -16,6 +16,7 @@ import {
   RefreshCw,
   Clock,
   Briefcase,
+  MapPin,
 } from 'lucide-react';
 import { api, UserContext } from '../../services/api';
 
@@ -33,12 +34,19 @@ export const AdminProfilePage: React.FC<AdminProfilePageProps> = ({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Form Fields
+  // Form Fields - Personal
   const [name, setName] = useState(userContext.name || '');
   const [email, setEmail] = useState(userContext.email || '');
   const [positionTitle, setPositionTitle] = useState('Administrador General');
-  const [phone, setPhone] = useState('(604) 671 0000');
   
+  // Form Fields - Municipal Contact & Schedule (Alcaldía)
+  const [alcaldiaAddress, setAlcaldiaAddress] = useState('Carrera 2 No. 24-45, Palacio Municipal, Quibdó - Chocó');
+  const [alcaldiaPhone, setAlcaldiaPhone] = useState('(604) 671 0000 · Línea Gratuita: 01 8000 910 120');
+  const [alcaldiaEmail, setAlcaldiaEmail] = useState('contacto@quibdo-choco.gov.co');
+  const [alcaldiaSchedule, setAlcaldiaSchedule] = useState('Lunes a Viernes: 8:00 a.m. a 12:00 m. y de 2:00 p.m. a 5:00 p.m.');
+  const [alcaldiaScheduleNote, setAlcaldiaScheduleNote] = useState('Atención prioritaria para mujeres gestantes, personas con discapacidad y adultos mayores.');
+  const [alcaldiaSubtitle, setAlcaldiaSubtitle] = useState('Secretaría de Gobierno y Secretaría Coordinadora del Proceso de Atención a Población Migrante.');
+
   // Password Fields
   const [changePassword, setChangePassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -50,13 +58,25 @@ export const AdminProfilePage: React.FC<AdminProfilePageProps> = ({
     const fetchUserData = async () => {
       setLoading(true);
       try {
-        const users = await api.getUsers(userContext);
+        const [configData, users] = await Promise.all([
+          api.getConfig().catch(() => null),
+          api.getUsers(userContext).catch(() => []),
+        ]);
+
+        if (configData) {
+          if (configData.alcaldiaAddress) setAlcaldiaAddress(configData.alcaldiaAddress);
+          if (configData.alcaldiaPhone) setAlcaldiaPhone(configData.alcaldiaPhone);
+          if (configData.alcaldiaEmail) setAlcaldiaEmail(configData.alcaldiaEmail);
+          if (configData.alcaldiaSchedule) setAlcaldiaSchedule(configData.alcaldiaSchedule);
+          if (configData.alcaldiaScheduleNote) setAlcaldiaScheduleNote(configData.alcaldiaScheduleNote);
+          if (configData.alcaldiaSubtitle) setAlcaldiaSubtitle(configData.alcaldiaSubtitle);
+        }
+
         const currentUserData = users.find((u) => u.id === userContext.id || u.email === userContext.email);
         if (currentUserData) {
           setName(currentUserData.name || userContext.name || '');
           setEmail(currentUserData.email || userContext.email || '');
           setPositionTitle(currentUserData.positionTitle || 'Administrador General');
-          setPhone(currentUserData.phone || '(604) 671 0000');
         }
       } catch (err) {
         console.warn('No se pudo cargar detalle extendido de usuario, usando contexto actual:', err);
@@ -99,7 +119,6 @@ export const AdminProfilePage: React.FC<AdminProfilePageProps> = ({
         name: name.trim(),
         email: email.trim().toLowerCase(),
         positionTitle: positionTitle.trim(),
-        phone: phone.trim(),
         role: 'admin',
       };
 
@@ -107,7 +126,20 @@ export const AdminProfilePage: React.FC<AdminProfilePageProps> = ({
         payload.password = newPassword;
       }
 
-      await api.updateUser(userContext.id, payload, userContext);
+      await Promise.all([
+        api.updateUser(userContext.id, payload, userContext),
+        api.updateConfig(
+          {
+            alcaldiaAddress: alcaldiaAddress.trim(),
+            alcaldiaPhone: alcaldiaPhone.trim(),
+            alcaldiaEmail: alcaldiaEmail.trim(),
+            alcaldiaSchedule: alcaldiaSchedule.trim(),
+            alcaldiaScheduleNote: alcaldiaScheduleNote.trim(),
+            alcaldiaSubtitle: alcaldiaSubtitle.trim(),
+          },
+          userContext
+        ),
+      ]);
 
       // Update parent state / session context
       if (onUpdateUser) {
@@ -117,7 +149,7 @@ export const AdminProfilePage: React.FC<AdminProfilePageProps> = ({
         });
       }
 
-      setSuccessMessage('Perfil de Administrador actualizado correctamente.');
+      setSuccessMessage('Perfil de Administrador e información institucional de la Alcaldía actualizados correctamente.');
       setChangePassword(false);
       setNewPassword('');
       setConfirmPassword('');
@@ -178,10 +210,6 @@ export const AdminProfilePage: React.FC<AdminProfilePageProps> = ({
               <div className="flex items-center gap-2.5 text-slate-600 dark:text-slate-300">
                 <Mail className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span className="font-mono text-[11px] truncate">{email || 'admin@sistema.com'}</span>
-              </div>
-              <div className="flex items-center gap-2.5 text-slate-600 dark:text-slate-300">
-                <Phone className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span className="font-mono text-[11px]">{phone || '(604) 671 0000'}</span>
               </div>
               <div className="flex items-center gap-2.5 text-slate-600 dark:text-slate-300">
                 <Building2 className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -283,23 +311,115 @@ export const AdminProfilePage: React.FC<AdminProfilePageProps> = ({
                         />
                       </div>
 
-                      {/* Phone */}
-                      <div className="space-y-1.5">
-                        <label className="font-bold text-slate-700 dark:text-slate-300">
-                          Teléfono de Contacto
+                    </div>
+                  </div>
+
+                  {/* Section 2: Municipal Contact & Attention Schedule Info (Visible on Public Portal) */}
+                  <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-bold text-xs uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                        <Building2 className="w-4 h-4" />
+                        <span>Datos de Contacto y Horarios de la Alcaldía (Portal Público)</span>
+                      </h3>
+                      <span className="text-[10px] font-semibold text-slate-400">
+                        Visible en el pie de página público
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Alcaldía Address */}
+                      <div className="space-y-1.5 sm:col-span-2">
+                        <label className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                          <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Dirección Oficial Sede Palacio Municipal</span>
                         </label>
                         <input
                           type="text"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          placeholder="Ej: (604) 671 0000 / 310..."
+                          value={alcaldiaAddress}
+                          onChange={(e) => setAlcaldiaAddress(e.target.value)}
+                          placeholder="Ej: Carrera 2 No. 24-45, Palacio Municipal, Quibdó - Chocó"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:ring-2 focus:ring-emerald-500 outline-none"
+                        />
+                      </div>
+
+                      {/* Alcaldía Phone PBX */}
+                      <div className="space-y-1.5">
+                        <label className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                          <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>PBX Municipal / Línea Gratuita</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={alcaldiaPhone}
+                          onChange={(e) => setAlcaldiaPhone(e.target.value)}
+                          placeholder="Ej: PBX Municipal: (604) 671 0000 · Línea Gratuita: 01 8000 910 120"
                           className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono focus:ring-2 focus:ring-emerald-500 outline-none"
+                        />
+                      </div>
+
+                      {/* Alcaldía Email */}
+                      <div className="space-y-1.5">
+                        <label className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                          <Mail className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Correo Electrónico Institucional</span>
+                        </label>
+                        <input
+                          type="email"
+                          value={alcaldiaEmail}
+                          onChange={(e) => setAlcaldiaEmail(e.target.value)}
+                          placeholder="Ej: contacto@quibdo-choco.gov.co"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-mono focus:ring-2 focus:ring-emerald-500 outline-none"
+                        />
+                      </div>
+
+                      {/* Alcaldía Schedule */}
+                      <div className="space-y-1.5">
+                        <label className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                          <Clock className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Horario General de Atención</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={alcaldiaSchedule}
+                          onChange={(e) => setAlcaldiaSchedule(e.target.value)}
+                          placeholder="Ej: Lunes a Viernes: 8:00 a.m. a 12:00 m. y de 2:00 p.m. a 5:00 p.m."
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:ring-2 focus:ring-emerald-500 outline-none"
+                        />
+                      </div>
+
+                      {/* Alcaldía Schedule Priority Note */}
+                      <div className="space-y-1.5">
+                        <label className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Nota de Atención Prioritaria</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={alcaldiaScheduleNote}
+                          onChange={(e) => setAlcaldiaScheduleNote(e.target.value)}
+                          placeholder="Ej: Atención prioritaria para mujeres gestantes, personas con discapacidad..."
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:ring-2 focus:ring-emerald-500 outline-none"
+                        />
+                      </div>
+
+                      {/* Alcaldia Subtitle / Dependencies */}
+                      <div className="space-y-1.5 sm:col-span-2">
+                        <label className="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                          <Briefcase className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Nombre de Dependencias / Secretaría Coordinadora (Pie de Página)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={alcaldiaSubtitle}
+                          onChange={(e) => setAlcaldiaSubtitle(e.target.value)}
+                          placeholder="Ej: Secretaría de Gobierno y Secretaría Coordinadora del Proceso de Atención a Población Migrante."
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold focus:ring-2 focus:ring-emerald-500 outline-none"
                         />
                       </div>
                     </div>
                   </div>
 
-                  {/* Section 2: Security & Password Change */}
+                  {/* Section 3: Security & Password Change */}
                   <div className="space-y-4 pt-6 border-t border-slate-100 dark:border-slate-800">
                     <div className="flex items-center justify-between">
                       <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 flex items-center gap-2">

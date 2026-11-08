@@ -230,7 +230,6 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
 
           <div className="flex flex-wrap items-center justify-center gap-6 text-[11px] text-slate-400">
             <Link to="/" className="hover:text-white transition-colors">Portal Público</Link>
-            <Link to="/agenda" className="hover:text-white transition-colors">Cronograma de Fechas</Link>
             <Link to="/consultar-reporte" className="hover:text-white transition-colors">Consultar mi Reporte</Link>
             <Link to="/login" className="hover:text-white transition-colors">Ingreso Servidores Públicos</Link>
           </div>

@@ -27,6 +27,12 @@ export const INITIAL_CONFIG: SystemConfig = {
   observationDeadline: '2026-11-20T23:59:59',
   municipalityName: 'Quibdó',
   departmentName: 'Chocó',
+  alcaldiaAddress: 'Carrera 2 No. 24-45, Palacio Municipal, Quibdó - Chocó',
+  alcaldiaPhone: '(604) 671 0000 · Línea Gratuita: 01 8000 910 120',
+  alcaldiaEmail: 'contacto@quibdo-choco.gov.co',
+  alcaldiaSchedule: 'Lunes a Viernes: 8:00 a.m. a 12:00 m. y de 2:00 p.m. a 5:00 p.m.',
+  alcaldiaScheduleNote: 'Atención prioritaria para mujeres gestantes, personas con discapacidad y adultos mayores.',
+  alcaldiaSubtitle: 'Secretaría de Gobierno y Secretaría Coordinadora del Proceso de Atención a Población Migrante.',
   categories: [
     'Educación e Inclusión Escolar',
     'Salud y Afiliación al SGSSS',

@@ -134,7 +134,6 @@ export const EntitiesManager: React.FC<EntitiesManagerProps> = ({ entities, user
           role: 'institutional',
           entityId: targetEntityForUser.id,
           positionTitle: userPositionTitle.trim(),
-          phone: userPhone.trim(),
           active: true,
         },
         userContext

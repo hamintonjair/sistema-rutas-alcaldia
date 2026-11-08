@@ -79,7 +79,6 @@ const DEFAULT_ADMIN_USER: SeedUser = {
   role: 'admin',
   role_code: 'admin',
   positionTitle: 'Administrador General',
-  phone: '(604) 671 0000',
   active: true,
   createdAt: new Date().toISOString(),
   lastAccess: new Date().toISOString(),
@@ -530,7 +529,6 @@ app.post('/api/auth/login', async (req: Request, res: Response) => {
       entityName: user.entity_name || user.entityName,
       entity_name: user.entity_name || user.entityName,
       positionTitle: user.position_title || user.positionTitle,
-      phone: user.phone,
       active: user.active !== false,
       lastAccess: nowIso,
     };
@@ -670,42 +668,143 @@ app.get('/api/auth/me', authMiddleware, (req: AuthenticatedRequest, res: Respons
 
 // GET /api/config (Public)
 app.get('/api/config', async (req: Request, res: Response) => {
-  if (!supabase) return res.json(db.config);
+  const defaults = {
+    alcaldiaAddress: 'Carrera 2 No. 24-45, Palacio Municipal, Quibdó - Chocó',
+    alcaldiaPhone: '(604) 671 0000 · Línea Gratuita: 01 8000 910 120',
+    alcaldiaEmail: 'contacto@quibdo-choco.gov.co',
+    alcaldiaSchedule: 'Lunes a Viernes: 8:00 a.m. a 12:00 m. y de 2:00 p.m. a 5:00 p.m.',
+    alcaldiaScheduleNote: 'Atención prioritaria para mujeres gestantes, personas con discapacidad y adultos mayores.',
+    alcaldiaSubtitle: 'Secretaría de Gobierno y Secretaría Coordinadora del Proceso de Atención a Población Migrante.',
+  };
+
+  const currentAddress = db.config.alcaldiaAddress || defaults.alcaldiaAddress;
+  const currentPhone = db.config.alcaldiaPhone || defaults.alcaldiaPhone;
+  const currentEmail = db.config.alcaldiaEmail || defaults.alcaldiaEmail;
+  const currentSchedule = db.config.alcaldiaSchedule || defaults.alcaldiaSchedule;
+  const currentScheduleNote = db.config.alcaldiaScheduleNote || defaults.alcaldiaScheduleNote;
+  const currentSubtitle = db.config.alcaldiaSubtitle || defaults.alcaldiaSubtitle;
+
+  if (!supabase) {
+    return res.json({
+      ...defaults,
+      ...db.config,
+      alcaldiaAddress: currentAddress,
+      alcaldiaPhone: currentPhone,
+      alcaldiaEmail: currentEmail,
+      alcaldiaSchedule: currentSchedule,
+      alcaldiaScheduleNote: currentScheduleNote,
+      alcaldiaSubtitle: currentSubtitle,
+    });
+  }
+
   try {
-    const { data, error } = await supabase
+    let alcData: any = null;
+    try {
+      const { data: alcSb } = await supabase.from('alcaldia_info').select('*').limit(1).maybeSingle();
+      if (alcSb) alcData = alcSb;
+    } catch (e) {}
+
+    const { data } = await supabase
       .from('system_config')
       .select('*')
       .eq('id', 'global-config')
-      .single();
-    if (error || !data) return res.json(db.config);
+      .maybeSingle();
+
     res.json({
-      ...data,
-      municipalityName: data.municipality_name,
-      departmentName: data.department_name,
-      initialMeetingDate: data.initial_meeting_date,
-      observationDeadline: data.observation_deadline,
-      targetPopulations: data.target_populations,
+      ...defaults,
+      ...(data || {}),
+      ...db.config,
+      municipalityName: db.config.municipalityName || data?.municipality_name || alcData?.municipality_name || 'Quibdó',
+      departmentName: db.config.departmentName || data?.department_name || alcData?.department_name || 'Chocó',
+      initialMeetingDate: db.config.initialMeetingDate || data?.initial_meeting_date,
+      observationDeadline: db.config.observationDeadline || data?.observation_deadline,
+      targetPopulations: db.config.targetPopulations || data?.target_populations,
+      alcaldiaAddress: db.config.alcaldiaAddress || alcData?.address || data?.alcaldia_address || defaults.alcaldiaAddress,
+      alcaldiaPhone: db.config.alcaldiaPhone || alcData?.phone || data?.alcaldia_phone || defaults.alcaldiaPhone,
+      alcaldiaEmail: db.config.alcaldiaEmail || alcData?.email || data?.alcaldia_email || defaults.alcaldiaEmail,
+      alcaldiaSchedule: db.config.alcaldiaSchedule || alcData?.schedule || data?.alcaldia_schedule || defaults.alcaldiaSchedule,
+      alcaldiaScheduleNote: db.config.alcaldiaScheduleNote || alcData?.schedule_note || data?.alcaldia_schedule_note || defaults.alcaldiaScheduleNote,
+      alcaldiaSubtitle: db.config.alcaldiaSubtitle || alcData?.subtitle || alcData?.entity_subtitle || data?.alcaldia_subtitle || defaults.alcaldiaSubtitle,
     });
   } catch (err) {
     console.error('Error fetching config:', err);
-    res.json(db.config);
+    res.json({
+      ...defaults,
+      ...db.config,
+      alcaldiaAddress: currentAddress,
+      alcaldiaPhone: currentPhone,
+      alcaldiaEmail: currentEmail,
+      alcaldiaSchedule: currentSchedule,
+      alcaldiaScheduleNote: currentScheduleNote,
+      alcaldiaSubtitle: currentSubtitle,
+    });
   }
 });
 
 // PUT /api/config (Admin / Coordinator only)
-app.put('/api/config', authMiddleware, requireRole(['admin', 'coordinator']), (req: AuthenticatedRequest, res: Response) => {
+app.put('/api/config', authMiddleware, requireRole(['admin', 'coordinator']), async (req: AuthenticatedRequest, res: Response) => {
+  const {
+    alcaldiaAddress,
+    alcaldiaPhone,
+    alcaldiaEmail,
+    alcaldiaSchedule,
+    alcaldiaScheduleNote,
+    alcaldiaSubtitle,
+    ...rest
+  } = req.body;
+
+  if (alcaldiaAddress !== undefined) db.config.alcaldiaAddress = alcaldiaAddress;
+  if (alcaldiaPhone !== undefined) db.config.alcaldiaPhone = alcaldiaPhone;
+  if (alcaldiaEmail !== undefined) db.config.alcaldiaEmail = alcaldiaEmail;
+  if (alcaldiaSchedule !== undefined) db.config.alcaldiaSchedule = alcaldiaSchedule;
+  if (alcaldiaScheduleNote !== undefined) db.config.alcaldiaScheduleNote = alcaldiaScheduleNote;
+  if (alcaldiaSubtitle !== undefined) db.config.alcaldiaSubtitle = alcaldiaSubtitle;
+
   db.config = {
     ...db.config,
-    ...req.body,
+    ...rest,
   };
   saveDatabase();
+
+  if (supabase) {
+    try {
+      const alcUpdate = {
+        id: 'quibdo-alcaldia-main',
+        municipality_name: db.config.municipalityName || 'Quibdó',
+        department_name: db.config.departmentName || 'Chocó',
+        address: db.config.alcaldiaAddress,
+        phone: db.config.alcaldiaPhone,
+        email: db.config.alcaldiaEmail,
+        schedule: db.config.alcaldiaSchedule,
+        schedule_note: db.config.alcaldiaScheduleNote,
+        subtitle: db.config.alcaldiaSubtitle,
+        updated_at: new Date().toISOString(),
+      };
+      await supabase.from('alcaldia_info').upsert([alcUpdate]);
+    } catch (e) {}
+
+    try {
+      await supabase.from('system_config').upsert([{
+        id: 'global-config',
+        municipality_name: db.config.municipalityName || 'Quibdó',
+        department_name: db.config.departmentName || 'Chocó',
+        alcaldia_address: db.config.alcaldiaAddress,
+        alcaldia_phone: db.config.alcaldiaPhone,
+        alcaldia_email: db.config.alcaldiaEmail,
+        alcaldia_schedule: db.config.alcaldiaSchedule,
+        alcaldia_schedule_note: db.config.alcaldiaScheduleNote,
+        alcaldia_subtitle: db.config.alcaldiaSubtitle,
+      }]);
+    } catch (e) {}
+  }
+
   logAudit(
     req.user!.id,
     req.user!.name,
     req.user!.role,
     'Configuración',
     'ACTUALIZAR_CONFIGURACION',
-    'Fechas o parámetros de la ruta estratégica actualizados.'
+    'Fechas, datos de contacto o horarios de atención de la alcaldía actualizados.'
   );
   res.json({ success: true, config: db.config });
 });
@@ -1089,7 +1188,7 @@ app.get('/api/users', authMiddleware, requireRole(['admin', 'coordinator']), asy
       entityId: u.entity_id,
       entityName: u.entity_name,
       createdAt: u.created_at,
-      lastAccess: u.last_access
+      lastAccess: u.last_access,
     })));
   } catch (err) {
     console.error('Error fetching users:', err);
@@ -1160,7 +1259,6 @@ app.post('/api/users', authMiddleware, requireRole(['admin']), async (req: Authe
     password_hash: cleanPassword,
     positionTitle: positionTitle || 'Enlace Institucional',
     position_title: positionTitle || 'Enlace Institucional',
-    phone: phone || '',
     role: spanishRole as any,
     role_code: roleCode as any,
     entityId: roleCode === 'institutional' ? entityId : undefined,
@@ -1213,10 +1311,8 @@ app.post('/api/users', authMiddleware, requireRole(['admin']), async (req: Authe
         password_hash: newUser.password_hash,
         role: spanishRole,
         position_title: newUser.positionTitle || null,
-        phone: newUser.phone || null,
         entity_id: newUser.entityId || null,
         entity_name: newUser.entityName || null,
-        photo_url: null,
         active: newUser.active !== false,
         created_at: newUser.createdAt,
         last_access: newUser.lastAccess,
@@ -1241,7 +1337,22 @@ app.put('/api/users/:id', authMiddleware, requireRole(['admin']), async (req: Au
   const userIndex = db.users.findIndex((u) => u.id === id);
   const existing = userIndex !== -1 ? db.users[userIndex] : null;
 
-  const { name, email, positionTitle, phone, role, entityId, active, password } = req.body;
+  const {
+    name,
+    email,
+    positionTitle,
+    phone,
+    role,
+    entityId,
+    active,
+    password,
+    alcaldiaAddress,
+    alcaldiaPhone,
+    alcaldiaEmail,
+    alcaldiaSchedule,
+    alcaldiaScheduleNote,
+    alcaldiaSubtitle,
+  } = req.body;
 
   // Single entity assignment guard
   let entityName = existing?.entityName;
@@ -1268,7 +1379,6 @@ app.put('/api/users/:id', authMiddleware, requireRole(['admin']), async (req: Au
     name: name !== undefined ? name : existing?.name || '',
     email: email !== undefined ? email.trim().toLowerCase() : existing?.email || '',
     positionTitle: positionTitle !== undefined ? positionTitle : existing?.positionTitle,
-    phone: phone !== undefined ? phone : existing?.phone,
     role: spanishRole as any,
     role_code: roleCode as any,
     entityId: entityId !== undefined ? entityId : existing?.entityId,
@@ -1278,6 +1388,14 @@ app.put('/api/users/:id', authMiddleware, requireRole(['admin']), async (req: Au
     active: active !== undefined ? active : (existing?.active ?? true),
     password_hash: updatedPasswordHash || 'Usuario123*',
   };
+
+  // Sync municipal info if sent by Admin
+  if (alcaldiaAddress !== undefined) db.config.alcaldiaAddress = alcaldiaAddress;
+  if (alcaldiaPhone !== undefined) db.config.alcaldiaPhone = alcaldiaPhone;
+  if (alcaldiaEmail !== undefined) db.config.alcaldiaEmail = alcaldiaEmail;
+  if (alcaldiaSchedule !== undefined) db.config.alcaldiaSchedule = alcaldiaSchedule;
+  if (alcaldiaScheduleNote !== undefined) db.config.alcaldiaScheduleNote = alcaldiaScheduleNote;
+  if (alcaldiaSubtitle !== undefined) db.config.alcaldiaSubtitle = alcaldiaSubtitle;
 
   if (userIndex !== -1) {
     db.users[userIndex] = updatedUser;
@@ -1292,10 +1410,6 @@ app.put('/api/users/:id', authMiddleware, requireRole(['admin']), async (req: Au
     if (entIndex !== -1) {
       db.entities[entIndex].email = updatedUser.email;
       db.entities[entIndex].institutionalEmail = updatedUser.email;
-      if (updatedUser.phone) {
-        db.entities[entIndex].phone = updatedUser.phone;
-        db.entities[entIndex].institutionalPhone = updatedUser.phone;
-      }
       db.entities[entIndex].primaryResponsible = responsibleStr;
     }
     if (supabase) {
@@ -1304,7 +1418,6 @@ app.put('/api/users/:id', authMiddleware, requireRole(['admin']), async (req: Au
           email: updatedUser.email,
           primary_responsible: responsibleStr,
         };
-        if (updatedUser.phone) entUpdate.phone = updatedUser.phone;
         await supabase.from('entities').update(entUpdate).eq('id', updatedUser.entityId);
       } catch (sbErr) {
         console.warn('Could not sync user details to entity in Supabase:', sbErr);
@@ -1321,7 +1434,6 @@ app.put('/api/users/:id', authMiddleware, requireRole(['admin']), async (req: Au
         email: updatedUser.email,
         role: spanishRole,
         position_title: updatedUser.positionTitle || null,
-        phone: updatedUser.phone || null,
         entity_id: updatedUser.entityId || null,
         entity_name: updatedUser.entityName || null,
         active: updatedUser.active !== false,
@@ -6089,7 +6201,6 @@ app.all('/api/tests/fase10', async (req: Request, res: Response) => {
     active: true,
     password_hash: 'Quibdo2026*',
     positionTitle: 'Enlace de Inclusión Migrante',
-    phone: '3104556677',
     createdAt: new Date().toISOString(),
   };
   db.users.push(testUser);

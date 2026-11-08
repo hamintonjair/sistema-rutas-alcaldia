@@ -32,6 +32,12 @@ CREATE TABLE system_config (
     categories JSONB DEFAULT '[]'::jsonb,
     target_populations JSONB DEFAULT '[]'::jsonb,
     channels JSONB DEFAULT '[]'::jsonb,
+    alcaldia_address TEXT,
+    alcaldia_phone TEXT,
+    alcaldia_email TEXT,
+    alcaldia_schedule TEXT,
+    alcaldia_schedule_note TEXT,
+    alcaldia_subtitle TEXT,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -65,8 +71,6 @@ CREATE TABLE users (
     entity_id VARCHAR(64) REFERENCES entities(id) ON DELETE SET NULL,
     entity_name VARCHAR(255),
     position_title VARCHAR(255),
-    phone VARCHAR(100),
-    photo_url TEXT,
     active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     last_access TIMESTAMP WITH TIME ZONE
@@ -265,9 +269,21 @@ VALUES (
 
 -- =============================================================================
 -- 6. MIGRACIÓN PARA BASES DE DATOS EXISTENTES (NO DESTRUCTIVA)
--- Si ya ejecutó este script anteriormente y su tabla feedback_reports no tiene
--- los campos de entidad y respuesta institucional, ejecute este bloque:
+-- Si ya ejecutó este script anteriormente y su tabla feedback_reports o users no tiene
+-- los nuevos campos institucionales, ejecute este bloque en Supabase SQL Editor:
 -- =============================================================================
+ALTER TABLE users DROP COLUMN IF EXISTS phone;
+ALTER TABLE users DROP COLUMN IF EXISTS photo_url;
+
+ALTER TABLE system_config ADD COLUMN IF NOT EXISTS alcaldia_address TEXT;
+ALTER TABLE system_config ADD COLUMN IF NOT EXISTS alcaldia_phone TEXT;
+ALTER TABLE system_config ADD COLUMN IF NOT EXISTS alcaldia_email TEXT;
+ALTER TABLE system_config ADD COLUMN IF NOT EXISTS alcaldia_schedule TEXT;
+ALTER TABLE system_config ADD COLUMN IF NOT EXISTS alcaldia_schedule_note TEXT;
+ALTER TABLE system_config ADD COLUMN IF NOT EXISTS alcaldia_subtitle TEXT;
+
+ALTER TABLE alcaldia_info ADD COLUMN IF NOT EXISTS subtitle TEXT;
+
 ALTER TABLE feedback_reports ADD COLUMN IF NOT EXISTS entity_id VARCHAR(64) REFERENCES entities(id) ON DELETE SET NULL;
 ALTER TABLE feedback_reports ADD COLUMN IF NOT EXISTS response TEXT;
 ALTER TABLE feedback_reports ADD COLUMN IF NOT EXISTS responded_at TIMESTAMP WITH TIME ZONE;
