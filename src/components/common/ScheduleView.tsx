@@ -21,7 +21,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ config }) => {
           Cronograma y Fechas Clave de Articulación Institucional
         </h1>
         <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-          Fechas oficiales establecidas para la Ruta Estratégica para la Atención Integral de la Población Migrante en Quibdó.
+          Fechas oficiales establecidas para la Ruta Estratégica para la Atención Integral de la Población Refugiada y Migrante en Quibdó.
         </p>
       </div>
 

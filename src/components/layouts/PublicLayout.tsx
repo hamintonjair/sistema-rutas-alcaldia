@@ -44,7 +44,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
             />
             <div className="min-w-0 truncate">
               <span className="text-xs sm:text-base font-bold tracking-tight text-white block truncate">
-                Proceso Estratégico Migrante
+                Ruta Estratégica Refugiados y Migrantes
               </span>
               <span className="text-[10px] sm:text-xs text-emerald-400 font-semibold block -mt-1 truncate">
                 Alcaldía de Quibdó
@@ -224,7 +224,7 @@ export const PublicLayout: React.FC<PublicLayoutProps> = ({ config }) => {
               Alcaldía Municipal de Quibdó - Chocó • República de Colombia
             </div>
             <div className="text-[11px] text-slate-500">
-              Plataforma Institucional para la Atención Integral de la Población Migrante
+              Plataforma Institucional para la Atención Integral de la Población Refugiada y Migrante
             </div>
           </div>
 

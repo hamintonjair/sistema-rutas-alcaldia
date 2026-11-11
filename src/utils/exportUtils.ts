@@ -28,7 +28,7 @@ export function exportCleanRouteTechnicalSheetPDF(route: AttentionRoute, config?
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8.5);
-  doc.text('Proceso Estratégico de Atención a Población Migrante, Refugiada y Retornada', 14, 16);
+  doc.text('Ruta Estratégica para la Atención Integral de la Población Refugiada y Migrante en Quibdó', 14, 16);
   doc.text(`Ficha Técnica Oficial del Servicio Institucional | Estado: ${route.status.toUpperCase()}`, 14, 21);
 
   y = 34;

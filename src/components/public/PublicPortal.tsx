@@ -82,7 +82,7 @@ export const PublicPortal: React.FC<PublicPortalProps> = ({ config }) => {
           </div>
 
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold tracking-tight leading-tight text-white max-w-3xl">
-            Ruta Estratégica para la Atención Integral de la Población Migrante
+            Ruta Estratégica para la Atención Integral de la Población Refugiada y Migrante en Quibdó
           </h1>
 
           <p className="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed">

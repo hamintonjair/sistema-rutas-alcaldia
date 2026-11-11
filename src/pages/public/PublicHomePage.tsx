@@ -213,14 +213,14 @@ export const PublicHomePage: React.FC<PublicHomePageProps> = ({ config }) => {
                 <span>Alcaldía Municipal de Quibdó · Departamento del Chocó</span>
               </div>
               <div className="text-[11px] text-slate-400 font-medium block">
-                Plataforma Oficial del Proceso Estratégico Migrante
+                Plataforma Oficial de la Ruta Estratégica
               </div>
             </div>
           </div>
 
           {/* 2. Official Platform Title */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif font-bold tracking-tight text-white leading-tight max-w-4xl">
-            Proceso Estratégico para la Atención Integral de la Población Migrante
+            Ruta Estratégica para la Atención Integral de la Población Refugiada y Migrante en Quibdó
           </h1>
 
           {/* 3. Brief Citizen Explanation */}
